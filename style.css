@@ -1,0 +1,349 @@
+/* 全局设置 */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", sans-serif;
+  color: #333;
+  background: #f5fff8;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+/* 封面部分设置 */
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Quicksand:wght@500&display=swap');
+
+.fullscreen-section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 6rem 4rem;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover {
+  background: #C8E6C9;
+}
+
+
+.cover h1 {
+  font-family: 'Rubik Mono One', sans-serif;
+  font-size: 2.5vw;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: 1px;
+  color: #2E7D32;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.cover h1 .highlight {
+  color: #2E7D32;
+  display: inline-block;
+  opacity: 0;
+  animation: highlightFade 1.2s ease forwards;
+  animation-delay: 4.2s;
+}
+
+.cover h1 .highlight:nth-of-type(1) {
+  animation-name: pulseGreen;
+}
+
+.cover h1 .highlight:nth-of-type(2) {
+  animation-name: pulseOrange;
+  animation-delay: 4.6s;
+}
+
+.cover .subtitle {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.5vw;
+  margin-top: 2rem;
+  color: #1B5E20;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: subtitleGlow 1s ease forwards;
+  animation-delay: 4.5s;
+}
+
+.cover .team {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 1.2rem;
+  color: #1B5E20;
+  opacity: 0.7;
+  font-family: 'Quicksand', sans-serif;
+  animation: fadeIn 4s ease-in;
+}
+
+.typewriter {
+  overflow: hidden;
+  border-right: 0.15em solid #2E7D32;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  animation: typing 4s steps(55, end), blink-caret 0.75s step-end infinite;
+  font-size: 4vw;
+  font-family: 'Rubik Mono One', sans-serif;
+  color: #2E7D32;
+}
+
+
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #2E7D32; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes subtitleGlow {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGreen {
+  0% { opacity: 0; color: #2E7D32; text-shadow: none; }
+  100% { opacity: 1; color: #66BB6A; text-shadow: 0 0 10px #A5D6A7; }
+}
+
+@keyframes pulseOrange {
+  0% { opacity: 0; color: #2E7D32; text-shadow: none; }
+  100% { opacity: 1; color: #EF6C00; text-shadow: 0 0 10px #FFB74D; }
+}
+
+@keyframes highlightFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.subtitle-highlight {
+  font-weight: bold;
+}
+.subtitle-highlight.green {
+  color: #66BB6A;
+}
+.subtitle-highlight.orange {
+  color: #EF6C00;
+}
+.subtitle-highlight.blue {
+  color: #1976D2;
+}
+
+
+/* 故事内容区 */
+.story-container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.story-block {
+  padding: 8rem 8rem;
+  max-width:none;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.fullscreen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.content h2 {
+  font-size: 2.5rem;
+  color: #2E7D32;
+  margin-bottom: 1rem;
+}
+.content p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.image-text-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.alice-image {
+  flex: 0 0 280px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 字体更换 */
+.text-block p {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 3.2vw;
+  line-height: 1.6;
+  color: #1B5E20;
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  justify-content: flex-start;
+}
+
+/* 词语单独动画淡入延迟 */
+.fade-word {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: wordFade 0.6s ease forwards;
+}
+
+.fade-word.delay-0 { animation-delay: 0.2s; }
+.fade-word.delay-1 { animation-delay: 0.4s; }
+.fade-word.delay-2 { animation-delay: 0.6s; }
+.fade-word.delay-3 { animation-delay: 0.8s; }
+.fade-word.delay-4 { animation-delay: 1s; }
+.fade-word.delay-5 { animation-delay: 1.2s; }
+.fade-word.delay-6 { animation-delay: 1.4s; }
+.fade-word.delay-7 { animation-delay: 1.6s; }
+.fade-word.delay-8 { animation-delay: 1.8s; }
+.fade-word.delay-9 { animation-delay: 2s; }
+.fade-word.delay-10 { animation-delay: 2.2s; }
+.fade-word.delay-11 { animation-delay: 2.4s; }
+
+@keyframes wordFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 强调关键词 */
+.keyword-green {
+  color: #66BB6A;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(102, 187, 106, 0.3);
+}
+
+.keyword-orange {
+  color: #EF6C00;
+  font-weight: bold;
+  text-shadow: 0 0 6px rgba(255, 167, 38, 0.3);
+}
+
+.story-block h2 {
+  font-size: 2rem;
+  color: #2E7D32;
+  margin-bottom: 1rem;
+}
+
+.story-block p {
+  font-size: 1.1rem;
+}
+
+.highlight {
+  color: #EF6C00;
+  font-weight: bold;
+}
+
+button {
+  margin-top: 2rem;
+  background-color: #81C784;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.1rem;
+  font-family: 'Comic Neue', sans-serif;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(129, 199, 132, 0.3);
+  animation: pulseButton 2.5s ease-in-out infinite;
+}
+
+button:hover {
+  background-color: #66BB6A;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(102, 187, 106, 0.4);
+}
+
+/* Emoji bounce 动画 */
+.emoji-bounce {
+  display: inline-block;
+  animation: bounceEmoji 1.2s ease-in-out infinite;
+  font-size: 1.3rem;
+}
+
+/* 呼吸动画 */
+@keyframes pulseButton {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(129, 199, 132, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 18px rgba(129, 199, 132, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(129, 199, 132, 0.3);
+  }
+}
+
+/* Emoji 上下浮动动画 */
+@keyframes bounceEmoji {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* 动画样式 - 默认隐藏 */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 可选延迟类（仅用于延迟顺序，不带动画） */
+.fade-in.delay-1 { transition-delay: 0.5s; }
+.fade-in.delay-2 { transition-delay: 1s; }
+.fade-in.delay-3 { transition-delay: 1.5s; }
+
+/* 血糖动画容器设置 */
+
+#glucose-animation {
+  width: 70vw;
+  max-width: 70vw;
+  height: auto;
+  margin: 0 auto;
+  padding: 2rem 0;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+#glucose-animation svg {
+  display: block;
+  margin: 0 auto;
+}
+

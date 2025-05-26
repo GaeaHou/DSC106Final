@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eat & React: An Interactive Journey Through Food and Blood Sugar</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <!-- 封面主标题段，使用 section 替代 header -->
+  <section class="fullscreen-section cover">
+    <div class="content">
+      <h1 class="typewriter">
+        Eat & React: An Interactive Journey Through 
+        <span class="highlight">Food</span> and 
+        <span class="highlight">Blood Sugar</span>
+      </h1>
+      <p class="subtitle">
+        A Visual Exploration of 
+        <span class="subtitle-highlight green" style="animation-delay: 5s">Food</span>, 
+        <span class="subtitle-highlight orange" style="animation-delay: 5.4s">Glucose</span>, and 
+        <span class="subtitle-highlight blue" style="animation-delay: 5.8s">You</span>
+      </p>
+      <p class="team">By Alice, Bob, Carol, David</p>
+    </div>
+  </section>
+
+  <main class="story-container">
+
+    <!-- 第一段主问题介绍 -->
+    <section class="story-block fullscreen" id="intro">
+      <div class="content">
+        <h2 class="fade-in">What does your <span class="highlight">lunch</span> do to your blood sugar?</h2>
+        <p class="fade-in delay-1">“Our body is a rhythmic system, constantly responding to what we eat.”</p>
+        <div id="glucose-animation" class="fade-in delay-2"></div>
+      </div>
+    </section>
+
+    <!-- 第二段继续讲述 -->
+    <section class="story-block fullscreen" id="followup">
+      <div class="content image-text-layout">
+        <img class="alice-image fade-in" src="/data/Alice.png" alt="Alice" />
+        <div class="text-block fade-in delay-1">
+          <p><span class="fade-word delay-0">Let’s</span> <span class="fade-word delay-1">follow</span> 
+            <span class="fade-word delay-2">a</span> <span class="fade-word delay-3">day</span> 
+            <span class="fade-word delay-4">in</span> <span class="fade-word keyword-green delay-5">Alice’s life</span> 
+            <span class="fade-word delay-6">to</span> <span class="fade-word delay-7">see</span> 
+            <span class="fade-word delay-8">how</span> <span class="fade-word delay-9">food</span> 
+            <span class="fade-word delay-10">affects</span> 
+            <span class="fade-word keyword-orange delay-11">her blood sugar.</span></p>
+            <button onclick="document.getElementById('alice').scrollIntoView({ behavior: 'smooth' });">
+              <span class="emoji-bounce">👉</span> <span class="btn-text">Start with Alice’s Meals</span>
+            </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Alice 的三餐选择区（占位） -->
+    <section class="story-block fullscreen" id="alice">
+      <div class="content">
+        <h2>Alice's Meals</h2>
+        <p>Choose Alice's breakfast, lunch, and dinner to see how her blood sugar responds. Try mixing healthy vs. sugary foods.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="js/animation.js"></script>
+  <script type="module" src="js/observer.js"></script>
+
+</body>
+</html>
