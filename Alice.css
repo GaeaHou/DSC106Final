@@ -1,0 +1,337 @@
+/* alice.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', sans-serif;
+    background: #f5fff8;
+    color: #333;
+    text-align: center;
+  }
+
+  #loading-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #e0f2f1;
+  }
+  
+  .loading-text {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    animation: blink 1s infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .progress-bar {
+    width: 60%;
+    height: 16px;
+    background: #c8e6c9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  }
+  
+  .progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(to right, #66bb6a, #43a047);
+    animation: loadProgress 3.5s forwards;
+  }
+  
+  @keyframes loadProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+  }
+  
+  .hidden {
+    display: none;
+  }
+
+  
+  .fullscreen-scene {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1fff6;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+  
+  .scene-layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px;
+    gap: 2rem;
+  }
+  
+  .alice-visual {
+    flex: 0 0 30%;
+    display: flex;
+    justify-content: center;
+  }
+  .alice-visual img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .meal-right {
+    flex: 0 0 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .meal-wrapper {
+    width: 100%;
+    max-width: 800px; /* ✅ 控制统一宽度 */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  
+  .meal-interface,
+  .selected-meal-display {
+  width: 100%; /* ✅ 确保两个子区域占满同宽 */
+ }
+ 
+
+ .selected-meal-display h2 {
+    font-family: 'Comic Neue', cursive;
+    font-size: 1.8rem;
+  }
+  
+  .meal-slot {
+    font-family: 'Comic Neue', cursive;
+    font-size: 1.1rem;
+  }
+  .meal-interface h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    font-family: 'Quicksand', sans-serif;
+  }
+  
+  .meal-interface p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #444;
+  }
+  
+  .food-choice-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  
+  .food-category {
+    background: #ffffffdd;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .food-category h3 {
+    margin-bottom: 0.5rem;
+    color: #2E7D32;
+  }
+  
+  .food-category button {
+    display: block;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #81C784;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .food-category button:hover {
+    background-color: #66BB6A;
+  }
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  h1 {
+    color: #2E7D32;
+    font-size: 2.5rem;
+  }
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  
+  .selected-meal-display {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .meal-images {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .meal-slot {
+    width: 120px;
+    height: 120px;
+    background: #ffffffaa;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  .food-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .hidden {
+    display: none;
+  }
+
+  #glucose-predict {
+    background-color: #f1fff6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    box-sizing: border-box;
+  }
+  
+  .glucose-scene-content {
+    max-width: 1000px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 1.5s ease-in;
+  }
+  
+  .glucose-scene-content h2 {
+    font-size: 2rem;
+    color: #2E7D32;
+    margin-bottom: 1rem;
+  }
+  
+  .glucose-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #555;
+    font-style: italic;
+  }
+  
+  .curve-options {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  
+  .glucose-curve {
+    width: 250px;
+    height: auto;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .glucose-curve:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  }
+  
+  .curve-reveal {
+    font-size: 1.2rem;
+    color: #444;
+    margin-top: 2rem;
+  }
+  
+  .back-button {
+    margin-top: 1.5rem;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #81C784;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .back-button:hover {
+    background-color: #66BB6A;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .glucose-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .glucose-alice {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.glucose-alice .back-button {
+  margin-top: 1rem;
+}
+  
+  .glucose-alice img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .glucose-scene-content {
+    flex: 0 0 65%;
+    animation: fadeIn 1.5s ease-in;
+    text-align: center;
+  }

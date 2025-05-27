@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amy's Meal Choices</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="Alice.css">
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+  <style>
+    .fade-out {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .fade-in {
+      opacity: 1;
+      transition: opacity 1s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载动画 -->
+  <div id="loading-screen">
+    <div class="loading-text">🍽️ Loading Alice's Day...</div>
+    <div class="progress-bar">
+      <div class="progress"></div>
+    </div>
+  </div>
+
+  <section class="fullscreen-scene fade-in animate-start" id="meal-select">
+    <div class="scene-layout">
+      <div class="alice-visual">
+        <img src="./data/Alicethink.png" alt="Alice Thinking">
+      </div>
+      <div class="meal-right">
+        <div class="meal-interface">
+          <h1>What would <span style="color:#EF6C00">you</span> eat if you were <span style="color:#66BB6A">Alice</span>?</h1>
+          <p>Alice wants to eat healthy. But is every healthy food equal?</p>
+          <div class="food-choice-grid">
+            <div class="food-category">
+              <h3>Protein</h3>
+              <button onclick="selectFood('protein', 'Chicken')">🍗 Chicken</button>
+              <button onclick="selectFood('protein', 'Tofu')">🥬 Tofu</button>
+              <button onclick="selectFood('protein', 'Sausage')">🌭 Sausage</button>
+            </div>
+            <div class="food-category">
+              <h3>Carbs</h3>
+              <button onclick="selectFood('carb', 'Brown Rice')">🍚 Brown Rice</button>
+              <button onclick="selectFood('carb', 'White Rice')">🍚 White Rice</button>
+              <button onclick="selectFood('carb', 'Sweet Potato')">🍠 Sweet Potato</button>
+              <button onclick="selectFood('carb', 'French Fries')">🍟 Fries</button>
+            </div>
+            <div class="food-category">
+              <h3>Veggie / Fruit</h3>
+              <button onclick="selectFood('veg', 'Broccoli')">🥦 Broccoli</button>
+              <button onclick="selectFood('veg', 'Corn')">🌽 Corn</button>
+              <button onclick="selectFood('veg', 'Apple')">🍎 Apple</button>
+              <button onclick="selectFood('veg', 'Raisins')">🍇 Raisins</button>
+            </div>
+          </div>
+        </div>
+        <div id="selected-meal" class="selected-meal-display">
+          <h2>Your Meal Selection</h2>
+          <div class="meal-images">
+            <div id="img-protein" class="meal-slot"></div>
+            <div id="img-carb" class="meal-slot"></div>
+            <div id="img-veg" class="meal-slot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fullscreen-scene hidden fade-out" id="glucose-predict">
+    <div class="glucose-layout">
+  
+      <!-- 左侧 Alice 吃饭图像 + 返回按钮 -->
+      <div class="glucose-alice">
+        <img src="./data/Aliceeat.png" alt="Alice Eating" />
+        <button onclick="goBackToSelection()" class="back-button">🔙 Back to Meal Selection</button>
+      </div>
+  
+      <!-- 右侧内容：绘图 + 提交 + 实际结果 -->
+      <div class="glucose-scene-content">
+        <h2>Can You Predict Alice's Glucose Response?</h2>
+        <p class="glucose-subtitle">Draw how you think her blood sugar changes after this meal!</p>
+  
+        <!-- 用户绘图区 -->
+        <div>
+          <canvas id="user-curve" width="500" height="250" style="border: 2px dashed #ccc; border-radius: 10px;"></canvas>
+          <p><button class="back-button" onclick="submitPrediction()">📈 Submit Your Prediction</button></p>
+        </div>
+  
+        <!-- 实际曲线对比区 -->
+        <div class="hidden" id="real-curve-area">
+          <h3>Actual Response</h3>
+          <canvas id="real-curve" width="500" height="250" style="border: 2px solid #2E7D32; border-radius: 10px;"></canvas>
+          <p id="accuracy-result" style="margin-top: 1rem; font-size: 1.1rem; color: #2E7D32;"></p>
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  
+
+  <script>
+    const meal = { protein: null, carb: null, veg: null };
+
+    window.selectFood = function(type, item) {
+      meal[type] = item;
+      const imgMap = {
+        "Chicken": "🍗", "Tofu": "🥬", "Sausage": "🌭",
+        "Brown Rice": "🍚", "White Rice": "🍚", "Sweet Potato": "🍠", "French Fries": "🍟",
+        "Broccoli": "🥦", "Corn": "🌽", "Apple": "🍎", "Raisins": "🍇"
+      };
+      const slotId = `img-${type}`;
+      const slot = document.getElementById(slotId);
+      if (slot) {
+        slot.innerHTML = `<span class="food-emoji">${imgMap[item]}</span><div>${item}</div>`;
+      }
+      if (meal.protein && meal.carb && meal.veg) {
+        setTimeout(() => {
+          document.getElementById('meal-select').classList.add('fade-out');
+          setTimeout(() => {
+            document.getElementById('meal-select').classList.add('hidden');
+            document.getElementById('glucose-predict').classList.remove('hidden');
+            document.getElementById('glucose-predict').classList.remove('fade-out');
+            document.getElementById('glucose-predict').classList.add('fade-in');
+          }, 1000);
+        }, 600);
+      }
+    }
+
+    window.selectCurve = function(id) {
+      document.getElementById('curve-reveal').classList.remove('hidden');
+    }
+
+    window.goBackToSelection = function() {
+      document.getElementById('glucose-predict').classList.remove('fade-in');
+      document.getElementById('glucose-predict').classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('glucose-predict').classList.add('hidden');
+        document.getElementById('meal-select').classList.remove('hidden');
+        document.getElementById('meal-select').classList.remove('fade-out');
+        document.getElementById('meal-select').classList.add('fade-in');
+      }, 500);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('meal-select').classList.remove('hidden');
+      }, 3500);
+    });
+    window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        // 隐藏加载屏幕
+        document.getElementById('loading-screen').style.display = 'none';
+
+        // 显示场景
+        const mealScene = document.getElementById('meal-select');
+        mealScene.classList.remove('hidden');
+
+        // ✨ 添加动画触发类名
+        setTimeout(() => {
+        mealScene.classList.add('animate-ready');
+        }, 100); // 确保 DOM 渲染完成
+    }, 3500); // 与加载条时间保持一致
+    });
+    
+    window.goBackToSelection = function () {
+  // 场景切换
+  document.getElementById('glucose-predict').classList.add('hidden');
+  document.getElementById('meal-select').classList.remove('hidden');
+
+  // 清除已选内容
+  meal.protein = null;
+  meal.carb = null;
+  meal.veg = null;
+
+  // 清空展示区域
+  ['img-protein', 'img-carb', 'img-veg'].forEach(id => {
+    const slot = document.getElementById(id);
+    if (slot) slot.innerHTML = '';
+  });
+
+  // 隐藏 glucose options & curve result
+  const curveReveal = document.getElementById('curve-reveal');
+  if (curveReveal) curveReveal.classList.add('hidden');
+
+  const glucoseOptions = document.getElementById('glucose-options');
+  if (glucoseOptions) glucoseOptions.classList.add('hidden');
+
+  const realArea = document.getElementById('real-curve-area');
+  if (realArea) realArea.classList.add('hidden');
+
+  // 🎯 清空真实曲线内容
+  if (realCtx) realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
+
+  // 🎯 重新初始化用户绘图曲线
+  initCurve();
+}
+  </script>
+  <script src="./js/draw.js"></script>
+</body>
+</html>
+
