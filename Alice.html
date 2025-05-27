@@ -98,149 +98,197 @@
           <canvas id="real-curve" width="500" height="250" style="border: 2px solid #2E7D32; border-radius: 10px;"></canvas>
           <p id="accuracy-result" style="margin-top: 1rem; font-size: 1.1rem; color: #2E7D32;"></p>
         </div>
-       <!-- 模糊白色雾效果 -->
-        <div class="fog-effect hidden" id="fog-effect">
-        <span>↓ Scroll down to continue</span>
-      </div>
+        <p id="click-anywhere-tip" class="continue-hint">Click anywhere to continue</p>
       </div>
   
     </div>
   </section>
 
-  <!-- 新增叙事部分 -->
-  <section class="narrative-section hidden" id="narrative-section">
-    <div class="narrative-box" id="narrative-box">
-      <p id="narrative-text"></p>
-      <button class="narrative-button hidden" onclick="navigateToCompare()">→ Show Real Glucose Trends</button>
+  <section class="fullscreen-scene hidden" id="next-scene">
+    <div class="next-scene-content glass-box">
+      <div id="typed-container"></div>
+      <button id="show-trend-btn" class="hidden slide-in-button" onclick="location.href='glucose-visualization.html'">
+        → Show Real Glucose Trends
+      </button>
     </div>
   </section>
   
 
   <script>
-   const meal = { protein: null, carb: null, veg: null };
-
+    const meal = { protein: null, carb: null, veg: null };
+  
     window.selectFood = function(type, item) {
-    meal[type] = item;
-    const imgMap = {
+      meal[type] = item;
+      const imgMap = {
         "Chicken": "🍗", "Tofu": "🥬", "Sausage": "🌭",
         "Brown Rice": "🍚", "White Rice": "🍚", "Sweet Potato": "🍠", "French Fries": "🍟",
         "Broccoli": "🥦", "Corn": "🌽", "Apple": "🍎", "Raisins": "🍇"
-    };
-    const slotId = `img-${type}`;
-    const slot = document.getElementById(slotId);
-    if (slot) {
+      };
+      const slotId = `img-${type}`;
+      const slot = document.getElementById(slotId);
+      if (slot) {
         slot.innerHTML = `<span class="food-emoji">${imgMap[item]}</span><div>${item}</div>`;
-    }
-    if (meal.protein && meal.carb && meal.veg) {
+      }
+      if (meal.protein && meal.carb && meal.veg) {
         setTimeout(() => {
-        document.getElementById('meal-select').classList.add('fade-out');
-        setTimeout(() => {
+          document.getElementById('meal-select').classList.add('fade-out');
+          setTimeout(() => {
             document.getElementById('meal-select').classList.add('hidden');
             document.getElementById('glucose-predict').classList.remove('hidden');
             document.getElementById('glucose-predict').classList.remove('fade-out');
             document.getElementById('glucose-predict').classList.add('fade-in');
-        }, 1000);
+          }, 1000);
         }, 600);
+      }
     }
+  
+    window.selectCurve = function(id) {
+      document.getElementById('curve-reveal').classList.remove('hidden');
     }
-
-    window.goBackToSelection = function() {
-    document.getElementById('glucose-predict').classList.remove('fade-in');
-    document.getElementById('glucose-predict').classList.add('fade-out');
-    document.getElementById('narrative-section').classList.add('hidden');
-    setTimeout(() => {
+  
+    window.goBackToSelection = function () {
+      document.getElementById('glucose-predict').classList.remove('fade-in');
+      document.getElementById('glucose-predict').classList.add('fade-out');
+      setTimeout(() => {
         document.getElementById('glucose-predict').classList.add('hidden');
         document.getElementById('meal-select').classList.remove('hidden');
         document.getElementById('meal-select').classList.remove('fade-out');
         document.getElementById('meal-select').classList.add('fade-in');
-        // 清除已选内容
-        meal.protein = null;
-        meal.carb = null;
-        meal.veg = null;
-        ['img-protein', 'img-carb', 'img-veg'].forEach(id => {
+      }, 500);
+  
+      // Reset meal
+      meal.protein = null;
+      meal.carb = null;
+      meal.veg = null;
+  
+      ['img-protein', 'img-carb', 'img-veg'].forEach(id => {
         const slot = document.getElementById(id);
         if (slot) slot.innerHTML = '';
-        });
-        // 隐藏结果区域和雾效果
-        const realArea = document.getElementById('real-curve-area');
-        if (realArea) realArea.classList.add('hidden');
-        const fogEffect = document.getElementById('fog-effect');
-        if (fogEffect) fogEffect.classList.add('hidden');
-        const narrativeBox = document.getElementById('narrative-box');
-        if (narrativeBox) narrativeBox.classList.remove('visible');
-        const narrativeButton = document.querySelector('.narrative-button');
-        if (narrativeButton) narrativeButton.classList.add('hidden');
-        // 重置绘图状态
-        initCurve();
+      });
+  
+      const curveReveal = document.getElementById('curve-reveal');
+      if (curveReveal) curveReveal.classList.add('hidden');
+  
+      const glucoseOptions = document.getElementById('glucose-options');
+      if (glucoseOptions) glucoseOptions.classList.add('hidden');
+  
+      const realArea = document.getElementById('real-curve-area');
+      if (realArea) realArea.classList.add('hidden');
+  
+      // 🎯 Reset canvas state
+      if (typeof initCurve === "function") initCurve();
+      if (typeof realCtx !== "undefined" && typeof realCanvas !== "undefined") {
         realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
-    }, 500);
+      }
     }
-
+  
     window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
+      setTimeout(() => {
         document.getElementById('loading-screen').style.display = 'none';
-        document.getElementById('meal-select').classList.remove('hidden');
+        const mealScene = document.getElementById('meal-select');
+        mealScene.classList.remove('hidden');
         setTimeout(() => {
-        document.getElementById('meal-select').classList.add('animate-ready');
+          mealScene.classList.add('animate-ready');
         }, 100);
-    }, 3500);
+      }, 3500);
     });
-
-    // 提交预测逻辑
-    window.submitPrediction = function() {
-    // 显示实际曲线区域
-    const realArea = document.getElementById('real-curve-area');
-    if (realArea) realArea.classList.remove('hidden');
-    // 显示模糊雾效果
-    const fogEffect = document.getElementById('fog-effect');
-    if (fogEffect) fogEffect.classList.remove('hidden');
-    // 显示叙事部分
-    const narrativeSection = document.getElementById('narrative-section');
-    if (narrativeSection) narrativeSection.classList.remove('hidden');
+  
+    // ✅ 添加点击空白区域切换到下一个场景的逻辑
+    document.addEventListener('click', function (e) {
+      const target = e.target;
+      if (target.tagName === 'BUTTON' || target.tagName === 'CANVAS') return;
+  
+      const glucoseScene = document.getElementById('glucose-predict');
+      const realCurveShown = !document.getElementById('real-curve-area').classList.contains('hidden');
+  
+      if (!glucoseScene.classList.contains('hidden') && realCurveShown) {
+        goToNextScene();
+      }
+    });
+  
+    // ✅ 场景切换函数
+    function goToNextScene() {
+      const current = document.getElementById('glucose-predict');
+      const next = document.getElementById('next-scene');
+  
+      current.classList.add('fade-out');
+      setTimeout(() => {
+        current.classList.add('hidden');
+        next.classList.remove('hidden');
+        next.classList.add('fade-in');
+      }, 800);
     }
 
-    // 滚动触发叙事动画
-    window.addEventListener('DOMContentLoaded', () => {
-    const narrativeBox = document.getElementById('narrative-box');
-    const narrativeText = document.getElementById('narrative-text');
-    const narrativeButton = document.querySelector('.narrative-button');
+    function goToNextScene() {
+  const current = document.getElementById('glucose-predict');
+  const next = document.getElementById('next-scene');
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            narrativeBox.classList.add('visible');
-            // 开始打字动画
-            const text = "Hmm... This is just one possibility.\nBut in the real world, what does it look like for different people?\nLet's explore how blood sugar changes over time for 16 people.";
-            let index = 0;
-            narrativeText.textContent = '';
-            const typeText = () => {
-            if (index < text.length) {
-                narrativeText.textContent += text[index];
-                index++;
-                setTimeout(typeText, 50);
-            } else {
-                // 打字完成，3秒后显示按钮
-                setTimeout(() => {
-                narrativeButton.classList.remove('hidden');
-                narrativeButton.classList.add('visible');
-                }, 3000);
-            }
-            };
-            typeText();
-            // 停止观察以防止重复触发
-            observer.unobserve(narrativeBox);
-        }
-        });
-    }, { threshold: 0.5 });
+  current.classList.remove('fade-in');
+  current.classList.add('zoom-out-fade');
 
-    if (narrativeBox) observer.observe(narrativeBox);
-    });
+  setTimeout(() => {
+    current.classList.add('hidden');
+    next.classList.remove('hidden');
+    next.classList.add('zoom-in-fade');
 
-    window.navigateToCompare = function() {
-    window.location.href = 'glucose-compare.html';
+    // 启动台词打字动画
+    startTypingSequence();
+  }, 800);
+}
+
+function startTypingSequence() {
+  const lines = [
+    "“Hmm... this is just one possibility.”",
+    "“But in the real world, it may look quite different for different people.”",
+    "“Now, let's explore how people's glucose levels change over time in the real world.”"
+  ];
+  const container = document.getElementById('typed-container');
+  let lineIndex = 0;
+
+  function typeLine(line, callback) {
+    const lineWrapper = document.createElement('div');
+    lineWrapper.className = 'dialogue-line';
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'dialogue-text typing'; // 白底 + 光标
+    lineWrapper.appendChild(textSpan);
+    container.appendChild(lineWrapper);
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < line.length) {
+        textSpan.textContent = line.substring(0, i + 1);
+        i++;
+      } else {
+        clearInterval(interval);
+        textSpan.classList.remove('typing'); // 去除光标
+        setTimeout(callback, 1000);
+      }
+    }, 40);
+  }
+
+  function showNextLine() {
+    if (lineIndex < lines.length) {
+      typeLine(lines[lineIndex], () => {
+        lineIndex++;
+        showNextLine();
+      });
+    } else {
+      setTimeout(() => {
+        const btn = document.getElementById('show-trend-btn');
+        btn.classList.remove('hidden');
+        btn.classList.add('visible');
+        btn.onclick = () => {
+          window.location.href = './glucose-visualization.html';
+        };
+      }, 3000);
     }
+  }
+
+  showNextLine();
+}
+ 
   </script>
   <script src="./js/draw.js"></script>
 </body>
 </html>
-
