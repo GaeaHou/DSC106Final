@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amy's Meal Choices</title>
+    <link rel="icon" href="./data/image.png" type="image/x-icon" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="./data/image.png" type="image/x-icon" />
   <link rel="stylesheet" href="Alice.css">
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
   <style>
@@ -220,6 +220,23 @@
       }, 800);
     }
 
+    function goToNextScene() {
+  const current = document.getElementById('glucose-predict');
+  const next = document.getElementById('next-scene');
+
+  current.classList.remove('fade-in');
+  current.classList.add('zoom-out-fade');
+
+  setTimeout(() => {
+    current.classList.add('hidden');
+    next.classList.remove('hidden');
+    next.classList.add('zoom-in-fade');
+
+    // 启动台词打字动画
+    startTypingSequence();
+  }, 800);
+}
+
 function startTypingSequence() {
   const lines = [
     "“Hmm... this is just one possibility.”",
@@ -265,7 +282,7 @@ function startTypingSequence() {
         btn.onclick = () => {
           window.location.href = './glucose-visualization.html';
         };
-      }, 1000);
+      }, 3000);
     }
   }
 
