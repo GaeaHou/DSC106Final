@@ -163,6 +163,7 @@ function submitPrediction() {
 
   const acc = ((correct / numPoints) * 100).toFixed(1);
   document.getElementById("accuracy-result").textContent = `Your prediction accuracy: ${acc}%`;
+  document.getElementById('click-anywhere-tip').classList.remove('hidden');
 }
 
 initCurve();

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amy's Meal Choices</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="./data/image.png" type="image/x-icon" />
   <link rel="stylesheet" href="Alice.css">
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
   <style>
@@ -98,7 +99,7 @@
           <canvas id="real-curve" width="500" height="250" style="border: 2px solid #2E7D32; border-radius: 10px;"></canvas>
           <p id="accuracy-result" style="margin-top: 1rem; font-size: 1.1rem; color: #2E7D32;"></p>
         </div>
-        <p id="click-anywhere-tip" class="continue-hint">Click anywhere to continue</p>
+        <p id="click-anywhere-tip" class="continue-hint hidden">Click anywhere to continue</p>
       </div>
   
     </div>
@@ -219,23 +220,6 @@
       }, 800);
     }
 
-    function goToNextScene() {
-  const current = document.getElementById('glucose-predict');
-  const next = document.getElementById('next-scene');
-
-  current.classList.remove('fade-in');
-  current.classList.add('zoom-out-fade');
-
-  setTimeout(() => {
-    current.classList.add('hidden');
-    next.classList.remove('hidden');
-    next.classList.add('zoom-in-fade');
-
-    // 启动台词打字动画
-    startTypingSequence();
-  }, 800);
-}
-
 function startTypingSequence() {
   const lines = [
     "“Hmm... this is just one possibility.”",
@@ -281,7 +265,7 @@ function startTypingSequence() {
         btn.onclick = () => {
           window.location.href = './glucose-visualization.html';
         };
-      }, 3000);
+      }, 1000);
     }
   }
 
