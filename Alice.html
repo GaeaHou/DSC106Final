@@ -185,7 +185,7 @@
     if (slot) slot.innerHTML = '';
   });
 
-  // 隐藏 glucose options & curve result
+  // 隐藏结果区域
   const curveReveal = document.getElementById('curve-reveal');
   if (curveReveal) curveReveal.classList.add('hidden');
 
@@ -195,11 +195,9 @@
   const realArea = document.getElementById('real-curve-area');
   if (realArea) realArea.classList.add('hidden');
 
-  // 🎯 清空真实曲线内容
-  if (realCtx) realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
-
-  // 🎯 重新初始化用户绘图曲线
+  // 🎯 重置绘图状态（用户曲线、真实曲线清空）
   initCurve();
+  realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
 }
   </script>
   <script src="./js/draw.js"></script>
