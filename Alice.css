@@ -1,5 +1,6 @@
-/* alice.css */
+/* Alice.css */
 
+/* 全局样式 */
 body {
     margin: 0;
     padding: 0;
@@ -8,7 +9,14 @@ body {
     color: #333;
     text-align: center;
   }
-
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  /* 加载页面样式 */
   #loading-screen {
     height: 100vh;
     display: flex;
@@ -50,17 +58,12 @@ body {
     100% { width: 100%; }
   }
   
-  html, body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-  }
-  
+  /* 隐藏类 */
   .hidden {
-    display: none;
+    display: none !important;
   }
-
   
+  /* 餐点选择页面样式 */
   .fullscreen-scene {
     height: 100vh;
     display: flex;
@@ -86,6 +89,7 @@ body {
     display: flex;
     justify-content: center;
   }
+  
   .alice-visual img {
     max-width: 100%;
     height: auto;
@@ -98,10 +102,10 @@ body {
     justify-content: flex-start;
     gap: 2rem;
   }
-
+  
   .meal-wrapper {
     width: 100%;
-    max-width: 800px; /* ✅ 控制统一宽度 */
+    max-width: 800px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -111,23 +115,14 @@ body {
   
   .meal-interface,
   .selected-meal-display {
-  width: 100%; /* ✅ 确保两个子区域占满同宽 */
- }
- 
-
- .selected-meal-display h2 {
-    font-family: 'Comic Neue', cursive;
-    font-size: 1.8rem;
+    width: 100%;
   }
   
-  .meal-slot {
-    font-family: 'Comic Neue', cursive;
-    font-size: 1.1rem;
-  }
   .meal-interface h1 {
     font-size: 2.2rem;
     margin-bottom: 1rem;
     font-family: 'Quicksand', sans-serif;
+    color: #2E7D32;
   }
   
   .meal-interface p {
@@ -176,24 +171,10 @@ body {
   .food-category button:hover {
     background-color: #66BB6A;
   }
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-  }
-  h1 {
-    color: #2E7D32;
-    font-size: 2.5rem;
-  }
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-  }
-
   
-  .selected-meal-display {
-    margin-top: 1rem;
-    text-align: center;
+  .selected-meal-display h2 {
+    font-family: 'Comic Neue', cursive;
+    font-size: 1.8rem;
   }
   
   .meal-images {
@@ -212,8 +193,9 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #555;
+    font-family: 'Comic Neue', cursive;
   }
   
   .food-emoji {
@@ -221,10 +203,7 @@ body {
     margin-bottom: 0.5rem;
   }
   
-  .hidden {
-    display: none;
-  }
-
+  /* 血糖预测页面样式 */
   #glucose-predict {
     background-color: #f1fff6;
     display: flex;
@@ -234,11 +213,39 @@ body {
     box-sizing: border-box;
   }
   
+  .glucose-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .glucose-alice {
+    flex: 0 0 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .glucose-alice img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .glucose-alice .back-button {
+    margin-top: 1rem;
+  }
+  
   .glucose-scene-content {
+    flex: 0 0 65%;
+    animation: fadeIn 1.5s ease-in;
+    text-align: center;
     max-width: 1000px;
     width: 100%;
-    text-align: center;
-    animation: fadeIn 1.5s ease-in;
   }
   
   .glucose-scene-content h2 {
@@ -297,47 +304,99 @@ body {
   .back-button:hover {
     background-color: #66BB6A;
   }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
-  .glucose-layout {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
+    /* 模糊白色雾效果 */
+    .fog-effect {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.8), transparent);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        pointer-events: none;
+      }
   
-  .glucose-alice {
-  flex: 0 0 30%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
+      .fog-effect.visible {
+        opacity: 1;
+      }
+  
+      .fog-effect span {
+        font-family: 'Comic Neue', cursive;
+        font-size: 1.2rem;
+        color: #333;
+        animation: pulse 2s infinite;
+      }
+  
+      @keyframes pulse {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(5px); }
+      }
+  
+     /* 模糊玻璃背景样式 */
+     .narrative-box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        max-width: 600px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      }
+  
+      .narrative-box.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+  
+      /* 打字动画 */
+      #narrative-text {
+        font-family: 'Comic Neue', cursive;
+        font-size: 1.2rem;
+        color: #333;
+        white-space: pre-wrap;
+        overflow: hidden;
+        border-right: 2px solid #333;
+        width: 0;
+        animation: typing 4s steps(40, end) forwards, blink 0.5s step-end infinite;
+      }
+  
+      @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+  
+      @keyframes blink {
+        50% { border-color: transparent; }
+      }
 
-.glucose-alice .back-button {
-  margin-top: 1rem;
-}
+
+    /* 导航按钮动画 */
+    .narrative-button {
+        background-color: #66BB6A;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        margin-top: 10px;
+      }
   
-  .glucose-alice img {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .glucose-scene-content {
-    flex: 0 0 65%;
-    animation: fadeIn 1.5s ease-in;
-    text-align: center;
-  }
+      .narrative-button.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
