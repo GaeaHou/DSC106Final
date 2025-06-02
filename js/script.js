@@ -1,122 +1,314 @@
-const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+const margin = { top: 50, right: 30, bottom: 50, left: 60 },
+      width = 650 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-const violinSvg = d3.select('#violin'),
-      vWidth   = +violinSvg.attr('width')  - margin.left - margin.right,
-      vHeight  = +violinSvg.attr('height') - margin.top  - margin.bottom;
-const vG = violinSvg.append('g')
-  .attr('transform', `translate(${margin.left},${margin.top})`);
 
-const boxSvg = d3.select('#boxplot'),
-      bWidth  = +boxSvg.attr('width')  - margin.left - margin.right,
-      bHeight = +boxSvg.attr('height') - margin.top  - margin.bottom;
-const bG = boxSvg.append('g')
-  .attr('transform', `translate(${margin.left},${margin.top})`);
+const svg = d3.select("#chart")
+  .append("svg")
+  .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .style("width", "100%")
+  .style("height", "auto")
+  .append("g")
+  .attr("transform", `translate(${margin.left},${margin.top})`);
 
-function kernelDensityEstimator(kernel, x) {
-  return values => x.map(xi => [ xi, d3.mean(values, v => kernel(xi - v)) ]);
-}
-function kernelEpanechnikov(k) {
-  return v => {
-    v = v / k;
-    return Math.abs(v) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
-  };
-}
+let dataByPerson = new Map();
 
-d3.csv('./data/project3_w_hba1c.csv', d => ({
-  hba1c: +d.HbA1c,
-  delta: +d.grow_in_glu,
-  gender: d.Gender
-})).then(data => {
-  const hVals = data.map(d => d.hba1c).sort(d3.ascending);
-  const t1 = d3.quantile(hVals, 1/3), t2 = d3.quantile(hVals, 2/3);
-  data.forEach(d => d.group = d.hba1c <= t1 ? 'Low'
-                                      : d.hba1c <= t2 ? 'Mid' : 'High');
-  const vGroups = Array.from(
-    d3.group(data, d => d.group),
-    ([key, vals]) => ({ key, values: vals.map(d => d.delta) })
-  );
-  const allD = data.map(d => d.delta);
-  const vX = d3.scaleBand()
-    .domain(vGroups.map(d => d.key))
-    .range([0, vWidth])
-    .padding(0.5);
-  const vY = d3.scaleLinear()
-    .domain([d3.min(allD), d3.max(allD)]).nice()
-    .range([vHeight, 0]);
-  const kde = kernelDensityEstimator(kernelEpanechnikov(7), vY.ticks(60));
+d3.csv("./data/dexcom_with_food_updated.csv").then(rawData => {
+    const data = rawData.map(d => {
+      const rawTime = d["Timestamp (YYYY-MM-DDThh:mm:ss)"];
+      const ts = new Date(rawTime.replace(" ", "T"));  // 修复非 ISO 格式
 
-  vGroups.forEach(gp => {
-    const density = kde(gp.values);
-    const maxD = d3.max(density, d => d[1]);
-    const xNum = d3.scaleLinear()
-      .domain([0, maxD])
-      .range([0, vX.bandwidth()/2]);
-    const area = d3.area()
-      .curve(d3.curveCatmullRom)
-      .x0(d => vX(gp.key) + vX.bandwidth()/2 - xNum(d[1]))
-      .x1(d => vX(gp.key) + vX.bandwidth()/2 + xNum(d[1]))
-      .y(d => vY(d[0]));
-    vG.append('path')
-      .datum(density)
-      .attr('class', 'violin')
-      .attr('d', area);
-  });
-  vG.append('g')
-    .attr('transform', `translate(0,${vHeight})`)
-    .call(d3.axisBottom(vX));
-  vG.append('g')
-    .call(d3.axisLeft(vY));
+      return {
+        ...d,
+        person: d.person.toString().padStart(3, '0'),
+        timestamp: ts,
+        date: d3.timeFormat("%Y-%m-%d")(ts)
+      };
+    });
 
-  const bGrouped = Array.from(
-    d3.group(data, d => d.gender),
-    ([key, vals]) => ({ key, values: vals.map(d => d.delta).sort(d3.ascending) })
-  );
-  const bSumm = bGrouped.map(d => {
-    const arr = d.values;
-    const q1 = d3.quantile(arr, 0.25),
-          med = d3.quantile(arr, 0.5),
-          q3 = d3.quantile(arr, 0.75);
-    const iqr = q3 - q1;
-    const lo = Math.max(d3.min(arr), q1 - 1.5 * iqr);
-    const hi = Math.min(d3.max(arr), q3 + 1.5 * iqr);
-    return { key: d.key, q1, med, q3, lo, hi };
-  });
-  const bX = d3.scaleBand()
-    .domain(bSumm.map(d => d.key))
-    .range([0, bWidth])
-    .padding(0.4);
-  const bY = d3.scaleLinear()
-    .domain([d3.min(bSumm, d => d.lo), d3.max(bSumm, d => d.hi)]).nice()
-    .range([bHeight, 0]);
+    dataByPerson = d3.group(data, d => d.person);
 
-  bG.selectAll('.whisker')
-    .data(bSumm)
-    .join('line')
-      .attr('class', 'whisker')
-      .attr('x1', d => bX(d.key) + bX.bandwidth()/2)
-      .attr('x2', d => bX(d.key) + bX.bandwidth()/2)
-      .attr('y1', d => bY(d.lo))
-      .attr('y2', d => bY(d.hi));
-  bG.selectAll('.box')
-    .data(bSumm)
-    .join('rect')
-      .attr('class', 'box')
-      .attr('x', d => bX(d.key))
-      .attr('y', d => bY(d.q3))
-      .attr('width', bX.bandwidth())
-      .attr('height', d => bY(d.q1) - bY(d.q3));
-  bG.selectAll('.median')
-    .data(bSumm)
-    .join('line')
-      .attr('class', 'median')
-      .attr('x1', d => bX(d.key))
-      .attr('x2', d => bX(d.key) + bX.bandwidth())
-      .attr('y1', d => bY(d.med))
-      .attr('y2', d => bY(d.med));
+    const personSelect = d3.select("#person-select");
+    const dateSelect = d3.select("#date-select");
 
-  bG.append('g')
-    .attr('transform', `translate(0,${bHeight})`)
-    .call(d3.axisBottom(bX));
-  bG.append('g')
-    .call(d3.axisLeft(bY));
+    personSelect.selectAll("option")
+      .data(Array.from(dataByPerson.keys()))
+      .join("option")
+      .attr("value", d => d)
+      .text(d => d);
+
+    personSelect.on("change", updateDateOptions);
+    dateSelect.on("change", drawChart);
+
+    updateDateOptions();
+
+    function updateDateOptions() {
+      const selectedPerson = personSelect.property("value");
+      const personData = dataByPerson.get(selectedPerson);
+      if (!personData) return;
+
+      const dates = Array.from(d3.group(personData, d => d.date).keys());
+
+      dateSelect.selectAll("option")
+        .data(dates)
+        .join("option")
+        .attr("value", d => d)
+        .text(d => d);
+
+      drawChart();
+    }
+
+    const tooltip = d3.select("#tooltip");
+    const timeFormat = d3.timeFormat("%-I:%M %p");
+
+    function drawChart() {
+        const selectedPerson = personSelect.property("value");
+        const selectedDate = dateSelect.property("value");
+
+        const personData = dataByPerson.get(selectedPerson);
+        if (!personData) return;
+
+        const filtered = personData
+          .filter(d => d.date === selectedDate)
+          .sort((a, b) => a.timestamp - b.timestamp);
+        if (filtered.length === 0) return;
+
+        svg.selectAll("*").remove();
+
+        let x = d3.scaleTime().domain(d3.extent(filtered, d => d.timestamp)).range([0, width]);
+        let y = d3.scaleLinear()
+          .domain([
+            d3.min(filtered, d => +d["Glucose Value (mg/dL)"]) - 10,
+            d3.max(filtered, d => +d["Glucose Value (mg/dL)"]) + 10
+          ])
+          .range([height, 0]);
+
+        const xAxis = svg.append("g")
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x).ticks(d3.timeHour.every(2)).tickFormat(d3.timeFormat("%H:%M")));
+
+        const yAxis = svg.append("g").call(d3.axisLeft(y));
+
+        svg.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", -50)
+          .attr("x", -height / 2)
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .style("font-size", "14px")
+          .text("Glucose Value (mg/dL)");
+
+        svg.append("text")
+          .attr("x", width / 2)
+          .attr("y", height + 40)
+          .style("text-anchor", "middle")
+          .style("font-size", "14px")
+          .text("Time of Day");
+
+        svg.append("text")
+          .attr("x", width / 2)
+          .attr("y", -20)
+          .attr("text-anchor", "middle")
+          .style("font-size", "16px")
+          .text(`Person ${selectedPerson} - ${selectedDate}`);
+
+
+        let brush = d3.brushX()
+          .extent([[0, 0], [width, height]])
+          .on("end", function (event) {
+            if (!event.selection) return;
+
+            const [x0, x1] = event.selection.map(x.invert);
+            const zoomed = filtered.filter(d => d.timestamp >= x0 && d.timestamp <= x1);
+
+            x = d3.scaleTime().domain([x0, x1]).range([0, width]);
+            y = d3.scaleLinear()
+              .domain([
+                d3.min(zoomed, d => +d["Glucose Value (mg/dL)"]) - 10,
+                d3.max(zoomed, d => +d["Glucose Value (mg/dL)"]) + 10
+              ])
+              .range([height, 0]);
+
+            svg.selectAll("path").remove();
+            svg.selectAll("circle").remove();
+            xAxis.call(d3.axisBottom(x).ticks(d3.timeHour.every(1)).tickFormat(d3.timeFormat("%H:%M")));
+            yAxis.call(d3.axisLeft(y));
+
+            drawAndBind(zoomed, x, y);
+            svg.select(".brush").call(brush.move, null);
+          });
+
+        svg.append("g").attr("class", "brush").call(brush);
+        drawAndBind(filtered, x, y);
+
+        d3.select("#reset-view").on("click", () => {
+          x = d3.scaleTime().domain(d3.extent(filtered, d => d.timestamp)).range([0, width]);
+          y = d3.scaleLinear()
+            .domain([
+              d3.min(filtered, d => +d["Glucose Value (mg/dL)"]) - 10,
+              d3.max(filtered, d => +d["Glucose Value (mg/dL)"]) + 10
+            ])
+            .range([height, 0]);
+
+          svg.selectAll("path").remove();
+          svg.selectAll("circle").remove();
+          svg.selectAll(".brush").remove();
+
+          xAxis.call(d3.axisBottom(x).ticks(d3.timeHour.every(2)).tickFormat(d3.timeFormat("%H:%M")));
+          yAxis.call(d3.axisLeft(y));
+
+          brush = d3.brushX()
+            .extent([[0, 0], [width, height]])
+            .on("end", function (event) {
+              if (!event.selection) return;
+
+              const [x0, x1] = event.selection.map(x.invert);
+              const zoomed = filtered.filter(d => d.timestamp >= x0 && d.timestamp <= x1);
+
+              x = d3.scaleTime().domain([x0, x1]).range([0, width]);
+              y = d3.scaleLinear()
+                .domain([
+                  d3.min(zoomed, d => +d["Glucose Value (mg/dL)"]) - 10,
+                  d3.max(zoomed, d => +d["Glucose Value (mg/dL)"]) + 10
+                ])
+                .range([height, 0]);
+
+              svg.selectAll("path").remove();
+              svg.selectAll("circle").remove();
+              xAxis.call(d3.axisBottom(x).ticks(d3.timeHour.every(1)).tickFormat(d3.timeFormat("%H:%M")));
+              yAxis.call(d3.axisLeft(y));
+              drawAndBind(zoomed, x, y);
+
+              svg.select(".brush").call(brush.move, null);
+            });
+
+          svg.append("g").attr("class", "brush").call(brush);
+          drawAndBind(filtered, x, y);
+        });
+    }
+
+  // ✅ 分离折线绘制 + tooltip 绑定逻辑
+    function drawAndBind(data, x, y) {
+        const segments = [];
+        let currentSegment = [data[0]];
+        for (let i = 1; i < data.length; i++) {
+          const prev = data[i - 1];
+          const curr = data[i];
+          const gapMinutes = (curr.timestamp - prev.timestamp) / (1000 * 60);
+          if (gapMinutes < 60) {
+            currentSegment.push(curr);
+          } else {
+            segments.push(currentSegment);
+            currentSegment = [curr];
+          }
+        }
+        if (currentSegment.length > 0) segments.push(currentSegment);
+
+        const lineGenerator = d3.line()
+          .x(d => x(d.timestamp))
+          .y(d => y(+d["Glucose Value (mg/dL)"]));
+
+        segments.forEach(segment => {
+          if (segment.length >= 2) {
+            const linePath = svg.append("path")
+              .datum(segment)
+              .attr("fill", "none")
+              .attr("stroke", "#007acc")
+              .attr("stroke-width", 2)
+              .attr("d", lineGenerator);
+        
+            // ✅ 添加线条绘制动画
+            const totalLength = linePath.node().getTotalLength();
+            linePath
+              .attr("stroke-dasharray", totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(1000)
+              .ease(d3.easeLinear)
+              .attr("stroke-dashoffset", 0);
+          }
+        });
+          
+
+        svg.selectAll("circle")
+          .data(data)
+          .join("circle")
+          .attr("cx", d => x(d.timestamp))
+          .attr("cy", d => y(+d["Glucose Value (mg/dL)"]))
+          .attr("r", 4)
+          .attr("fill", d => d.eat_flag === "True" || d.eat_flag === true ? "red" : "#007acc")
+          .attr("opacity", 0)  // 初始透明
+          .transition()
+          .delay((d, i) => i * 10)
+          .duration(300)
+          .attr("opacity", 1);
+
+        // ✅ 独立统一 tooltip 绑定
+        svg.selectAll("circle")
+          .on("mouseover", function (event, d) {
+            const hour = d.timestamp.getHours();
+            const isDay = hour >= 6 && hour < 18;
+            const iconPath = isDay ? "image/sun.png" : "image/moon.png";
+          
+            let html = `
+              <div style="position: relative;">
+                <img src="${iconPath}" width="20" style="position: absolute; top: 0; right: 0;" />
+                <div><strong>Time:</strong> ${timeFormat(d.timestamp)}</div>
+                <div><strong>Glucose:</strong> ${d["Glucose Value (mg/dL)"]} mg/dL</div>
+            `;
+          
+            if (d.eat_flag === "True" || d.eat_flag === true) {
+              html += `<div><strong>Food:</strong> ${d.logged_food || ""}</div>`;
+              html += `<div><strong>Amount:</strong> ${d.amount || ""}</div>`;
+              html += `<div><strong>Searched:</strong> ${d.searched_food || ""}</div>`;
+              html += `<div><strong>Calorie:</strong> ${d.calorie || ""} kcal</div>`;
+              html += `<div><strong>Carb:</strong> ${d.total_carb || ""} g</div>`;
+              html += `<div><strong>Fiber:</strong> ${d.dietary_fiber || ""} g</div>`;
+              html += `<div><strong>Sugar:</strong> ${d.sugar || ""} g</div>`;
+              html += `<div><strong>Protein:</strong> ${d.protein || ""} g</div>`;
+              html += `<div><strong>Fat:</strong> ${d.total_fat || ""} g</div>`;
+            }
+          
+            html += `</div>`;
+          
+            tooltip.html(html)
+              // .style("left", (event.pageX + 12) + "px")
+              // .style("top", (event.pageY - 28) + "px")
+              // .classed("show", true);
+
+            requestAnimationFrame(() => {
+              const tooltipNode = tooltip.node();
+              const tooltipWidth = tooltipNode.offsetWidth;
+              const tooltipHeight = tooltipNode.offsetHeight;
+          
+              const padding = 12; // 与鼠标距离
+              let x = event.pageX + padding;
+              let y = event.pageY + padding;
+          
+              // ⛔️ 屏幕右边界：往左偏移
+              if (x + tooltipWidth > window.innerWidth) {
+                x = event.pageX - tooltipWidth - padding;
+              }
+          
+              // ⛔️ 屏幕底部边界：往上偏移
+              if (y + tooltipHeight > window.innerHeight) {
+                y = event.pageY - tooltipHeight - padding;
+              }
+          
+              tooltip
+                .style("left", `${x}px`)
+                .style("top", `${y}px`)
+                .classed("show", true);
+            });
+          })
+          .on("mouseout", () => {
+            tooltip.classed("show", false);
+          });
+    }
+
+
+  
+  
+  
 });
