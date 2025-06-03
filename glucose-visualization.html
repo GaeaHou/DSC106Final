@@ -5,33 +5,53 @@
   <title>Glucose Visualization</title>
   <link rel="stylesheet" href="glucose.css">
   <link rel="icon" href="data/image.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+  
+  <style>
+    .hidden { display: none; }
+    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+    .fade-in { opacity: 1; transition: opacity 0.8s ease; }
 
+    @keyframes fadeInHint {
+      to { opacity: 1; }
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .slide-in-button {
+      margin-top: 2rem;
+      padding: 0.8rem 1.6rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background-color: #66BB6A;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .slide-in-button.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
   <div class="container">
 
-    <!-- 页面标题 -->
-    
-
     <div class="title-wrapper">
-      <h1 class="main-title">
-        How does glucose change throughout the day?
-      </h1>
-      <div class="subtitle">
-        Visualizing glucose patterns across meals and time
-      </div>
+      <h1 class="main-title">How does glucose change throughout the day?</h1>
+      <div class="subtitle">Visualizing glucose patterns across meals and time</div>
     </div>
-    
-    
 
-    <!-- ✅ 改为两栏布局 -->
     <div class="two-column-layout">
-
-      <!-- ✅ 左栏：上面是控件，下面是说明文字 -->
-
       <div class="column left-column">
-
-        <!-- ✅ 控件白框 -->
         <div class="control-card">
           <div class="controls-horizontal">
             <div class="control-group">
@@ -52,35 +72,123 @@
             <span class="dot red-dot"></span> Meal Indicator
           </div>
         </div>
-      
-        <!-- ✅ 文本白框 -->
         <div class="instruction-card">
           <div class="instruction">
             <p>This dashboard shows daily glucose levels recorded by continuous monitors. Each blue dot represents a glucose reading at a specific time, while red dots indicate readings recorded shortly after a meal.</p>
-
             <p>Hover over any point to view the exact time and glucose value. You can also zoom in by selecting a time range on the chart, and reset at any time.</p>
-  
             <p>Look closely at the red dots. <b>What happens to glucose levels after meals? Do they always rise? Are the patterns the same for every meal—or every person?</b></p>
-  
             <p>This tool is designed to help you explore those patterns. Try switching between different people and days. See if you can spot trends in how glucose behaves after breakfast, lunch, or dinner.</p>
             <img src="./data/intro.png" style="display: block; margin: 12px auto; max-width: 100%;" />
           </div>
         </div>
-      
       </div>
-      
 
-      <!-- 右栏：图表 -->
       <div class="column right-column">
         <div id="chart"></div>
       </div>
-
     </div>
   </div>
 
+  <!-- tooltip -->
   <div id="tooltip" class="tooltip"></div>
+
+  <!-- 滚动提示 -->
+  <div id="click-anywhere-tip" class="continue-hint hidden">
+    Click anywhere to continue
+  </div>
+
+  <!-- 动画过渡场景 -->
+  <section class="fullscreen-scene hidden" id="next-scene">
+    <div class="next-scene-content glass-box">
+    <div id="typed-container"></div>
+    <button id="show-trend-btn" class="slide-in-button hidden">→ Explore Group Trends</button>
+  </div>
+  </section>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="./js/script.js"></script>
+  <script>
+    // 滚动检测
+    window.addEventListener('scroll', () => {
+      const tip = document.getElementById('click-anywhere-tip');
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        tip.classList.remove('hidden');
+      }
+    });
+  
+    // 点击继续
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+      transitionToTypingScene();
+    });
+  
+    function transitionToTypingScene() {
+      document.querySelector('.container').classList.add('fade-out');
+      document.getElementById('click-anywhere-tip').classList.add('fade-out');
+  
+      setTimeout(() => {
+        document.querySelector('.container').style.display = 'none';
+        document.getElementById('click-anywhere-tip').style.display = 'none';
+        const scene = document.getElementById('next-scene');
+        scene.classList.remove('hidden');
+        scene.classList.add('fade-in');
+        startTypingSequence();
+      }, 800);
+    }
+  
+    // ✅ 台词动画：替换为你提供的四句对白
+    function startTypingSequence() {
+      const lines = [
+        "We’ve seen how glucose levels rise and fall throughout the day,",
+        "and how those patterns vary from person to person and meal to meal.",
+        "So what happens when we zoom out and look at many people at once?",
+        "Let’s explore the broader patterns hidden in group glucose data..."
+      ];
+      const container = document.getElementById('typed-container');
+      let lineIndex = 0;
+  
+      function typeLine(line, callback) {
+        const lineWrapper = document.createElement('div');
+        lineWrapper.className = 'dialogue-line';
+  
+        const textSpan = document.createElement('span');
+        textSpan.className = 'dialogue-text typing';
+        lineWrapper.appendChild(textSpan);
+        container.appendChild(lineWrapper);
+  
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < line.length) {
+            textSpan.textContent = line.substring(0, i + 1);
+            i++;
+          } else {
+            clearInterval(interval);
+            textSpan.classList.remove('typing');
+            setTimeout(callback, 800);
+          }
+        }, 40);
+      }
+  
+      function showNextLine() {
+        if (lineIndex < lines.length) {
+          typeLine(lines[lineIndex], () => {
+            lineIndex++;
+            showNextLine();
+          });
+        } else {
+          setTimeout(() => {
+            const btn = document.getElementById('show-trend-btn');
+            btn.classList.remove('hidden');
+            btn.classList.add('visible');
+            btn.onclick = () => {
+              window.location.href = './part5.html';
+            };
+          }, 1000);
+        }
+      }
+  
+      showNextLine();
+    }
+  </script>
 </body>
 </html>

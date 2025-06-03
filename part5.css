@@ -71,10 +71,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 5rem 2rem 2rem;   /* 顶部留出导航 5rem */
+    padding: 5rem 5rem 5rem;   /* 顶部留出导航 5rem */
     gap: 2rem;
     margin-top: 60px;          /* 避免导航栏遮挡 */
-    max-width: 1000px;
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -175,7 +175,7 @@
      每个 Section 的统一样式
      ======================================================================== */
   .section-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;          /* 水平居中 */
     padding: 100px 40px 60px;
   }
@@ -217,9 +217,9 @@
   .two-column {
     display: flex;                    /* 强制水平并排 */
     flex-direction: row;              /* 主轴水平方向 */
-    align-items: flex-start;          /* 顶部对齐 */
-    justify-content: space-between;   /* 左右拉开 */
-    gap: 2rem;                        /* 左右两列之间间距 */
+    align-items: center;          /* 顶部对齐 */
+    justify-content: space-evenly;   /* 左右拉开 */
+    gap: 4rem;                        /* 左右两列之间间距 */
     flex-wrap: nowrap;                /* 禁止换行 */
   }
   
@@ -253,7 +253,7 @@
   /* 左侧“数字统计格子” */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin: 1rem 0;
   }
