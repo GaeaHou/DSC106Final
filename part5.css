@@ -1,0 +1,404 @@
+/* ========================================================================
+   Reset & 通用样式
+   ======================================================================== */
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    font-family: 'Inter', "Helvetica Neue", sans-serif;
+    color: #333;
+    background: #f5fff8;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+  }
+  
+  /* ========================================================================
+     0. CSS 变量：配色 / 圆角 / 阴影
+     ======================================================================== */
+  :root {
+    --color-primary: #6C63FF;             /* 主紫色 */
+    --color-highlight: #6C63FF;           /* 强调色 */
+    --color-secondary-text: #555555;      /* 深灰文字 */
+    --border-radius: 20px;
+    --border-radius-small: 8px;
+    --shadow-default: rgba(0, 0, 0, 0.1);
+    --shadow-graphic: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* ========================================================================
+     顶部导航栏
+     ======================================================================== */
+  nav#navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    z-index: 100;
+  }
+  
+  nav#navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+  }
+  
+  nav#navbar li {
+    margin: 0 15px;
+  }
+  
+  nav#navbar a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  
+  nav#navbar a:hover {
+    color: #007acc;
+  }
+  
+  /* ========================================================================
+     Hero Section 布局
+     ======================================================================== */
+  .hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5rem 5rem 5rem;   /* 顶部留出导航 5rem */
+    gap: 2rem;
+    margin-top: 60px;          /* 避免导航栏遮挡 */
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .hero-section {
+      flex-direction: column;
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      margin-top: 60px;
+    }
+  
+    .hero-graphic {
+      margin-top: 2rem;
+    }
+  }
+  
+  .hero-text {
+    flex: 1 1 400px;
+    max-width: 600px;
+  }
+  
+  .hero-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: #333333;
+  }
+  
+  .hero-title .highlight {
+    color: var(--color-highlight);
+  }
+  
+  .hero-subtitle {
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: var(--color-secondary-text);
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .btn {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: var(--border-radius-small);
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #5951d4;
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: #f2f2ff;
+  }
+  
+  /* 右侧紫色圆角容器及装饰图标 */
+  .hero-graphic {
+    flex: 1 1 400px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .graphic-container {
+    position: relative;
+    width: 380px;
+    height: 300px;
+    background-color: var(--color-primary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-graphic);
+    overflow: hidden;
+  }
+  
+  /* ========================================================================
+     每个 Section 的统一样式
+     ======================================================================== */
+  .section-container {
+    max-width: 1200px;
+    margin: 0 auto;          /* 水平居中 */
+    padding: 100px 40px 60px;
+  }
+  
+  .section-container h1,
+  .section-container h2 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .section-container .subtitle {
+    font-size: 1rem;
+    color: var(--color-secondary-text);
+    margin-top: 4px;
+  }
+  
+  .section-container p,
+  .section-container ul,
+  .section-container ol {
+    margin-top: 10px;
+    color: #555;
+  }
+  
+  .section-container ul li,
+  .section-container ol li {
+    margin-bottom: 6px;
+  }
+  
+  .caption {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+  }
+  
+  /* ========================================================================
+     两栏布局：左侧总结文字，右侧图表
+     ======================================================================== */
+  .two-column {
+    display: flex;                    /* 强制水平并排 */
+    flex-direction: row;              /* 主轴水平方向 */
+    align-items: center;          /* 顶部对齐 */
+    justify-content: space-evenly;   /* 左右拉开 */
+    gap: 4rem;                        /* 左右两列之间间距 */
+    flex-wrap: nowrap;                /* 禁止换行 */
+  }
+  
+  .summary-text {
+    flex: 0 0 40%;                    /* 左侧占 40% 宽度 */
+    background-color: #ffffff;
+    border-radius: var(--border-radius-small);
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+  .summary-text h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  .summary-text p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--color-secondary-text);
+  }
+  .summary-text ul {
+    list-style: disc inside;
+    margin-bottom: 1rem;
+  }
+  .summary-text ul li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+  
+  /* 左侧“数字统计格子” */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-item h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: #333;
+  }
+  
+  .stat-item p {
+    font-size: 0.9rem;
+    color: var(--color-secondary-text);
+    line-height: 1.4;
+  }
+  
+  .chart-container {
+    flex: 0 0 55%;                    /* 右侧占 55% 宽度 */
+  }
+  .chart-container h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  .chart-container .caption {
+    margin-top: 4px;
+  }
+  
+  /* ========================================================================
+     Tooltip 样式
+     ======================================================================== */
+  .tooltip {
+    position: absolute;
+    background: #fff;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 13px;
+    color: #222;
+    opacity: 0;         /* 初始完全透明 */
+    display: none;      /* 初始不占据布局 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.2s;
+    z-index: 1000;      /* 确保出现在其他元素之上 */
+  }
+  
+  /* ========================================================================
+     BMI vs. HbA1c 散点图容器
+     ======================================================================== */
+  #comboScatter {
+    width: 100%;
+    height: 500px;
+    position: relative;
+  }
+  
+  /* ========================================================================
+     控件区（本例中取消了 Dropdown，故无需此类样式）
+     ======================================================================== */
+  /* 如若需要可自行添加 */
+  
+  /* ========================================================================
+     轮播 (Carousel) 样式
+     ======================================================================== */
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .carousel .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;                  /* 初始都隐藏 */
+    transition: opacity 0.8s ease;
+  }
+  
+  .carousel .slide.active {
+    opacity: 1;                  /* 带 active 的可见 */
+  }
+  
+  .carousel .slide img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  /* ========================================================================
+     响应式：当宽度 ≤ 992px 时，两栏改上下堆叠
+     ======================================================================== */
+  @media (max-width: 992px) {
+    .two-column {
+      flex-direction: column;
+      text-align: center;
+    }
+    .summary-text,
+    .chart-container {
+      width: 100%;
+      flex: none;   /* 禁止 flex:0 0 XX% 继续生效，改为占满整行 */
+    }
+  }
+  
+  /* ========================================================================
+     更小屏 (≤ 768px) 时，隐藏装饰图标并收缩轮播高度
+     ======================================================================== */
+  @media (max-width: 768px) {
+    .hero-section {
+      flex-direction: column;
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      margin-top: 60px;
+    }
+    .decor-icon {
+      display: none;
+    }
+    .graphic-container {
+      height: 250px;
+      width: 100%;
+      max-width: 350px;
+    }
+    .carousel .slide img {
+      max-height: 250px;
+    }
+    .section-container {
+      padding: 100px 20px 40px;
+    }
+    nav#navbar ul {
+      flex-wrap: wrap;
+    }
+    nav#navbar li {
+      margin: 5px 10px;
+    }
+  }

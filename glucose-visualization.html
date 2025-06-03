@@ -3,43 +3,192 @@
 <head>
   <meta charset="UTF-8">
   <title>Glucose Visualization</title>
-  <link rel="icon" href="./data/image.png" type="image/x-icon" />
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="glu_visual.css">
+  <link rel="stylesheet" href="glucose.css">
+  <link rel="icon" href="data/image.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+  
+  <style>
+    .hidden { display: none; }
+    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+    .fade-in { opacity: 1; transition: opacity 0.8s ease; }
+
+    @keyframes fadeInHint {
+      to { opacity: 1; }
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .slide-in-button {
+      margin-top: 2rem;
+      padding: 0.8rem 1.6rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background-color: #66BB6A;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .slide-in-button.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
-  <h1>Daily Glucose Visualization</h1>
+  <div class="container">
 
-  <div class="controls">
-    <label for="person-select">Select Person:</label>
-    <select id="person-select"></select>
+    <div class="title-wrapper">
+      <h1 class="main-title">How does glucose change throughout the day?</h1>
+      <div class="subtitle">Visualizing glucose patterns across meals and time</div>
+    </div>
 
-    <label for="date-select">Select Date:</label>
-    <select id="date-select"></select>
+    <div class="two-column-layout">
+      <div class="column left-column">
+        <div class="control-card">
+          <div class="controls-horizontal">
+            <div class="control-group">
+              <label for="person-select">Person:</label>
+              <select id="person-select"></select>
+            </div>
+            <div class="control-group">
+              <label for="date-select">Date:</label>
+              <select id="date-select"></select>
+            </div>
+            <div class="control-group">
+              <label>&nbsp;</label>
+              <button id="reset-view">🔄 Reset View</button>
+            </div>
+          </div>
+          <div class="control-legend">
+            <span class="dot blue-dot"></span> Glucose Point
+            <span class="dot red-dot"></span> Meal Indicator
+          </div>
+        </div>
+        <div class="instruction-card">
+          <div class="instruction">
+            <p>This dashboard shows daily glucose levels recorded by continuous monitors. Each blue dot represents a glucose reading at a specific time, while red dots indicate readings recorded shortly after a meal.</p>
+            <p>Hover over any point to view the exact time and glucose value. You can also zoom in by selecting a time range on the chart, and reset at any time.</p>
+            <p>Look closely at the red dots. <b>What happens to glucose levels after meals? Do they always rise? Are the patterns the same for every meal—or every person?</b></p>
+            <p>This tool is designed to help you explore those patterns. Try switching between different people and days. See if you can spot trends in how glucose behaves after breakfast, lunch, or dinner.</p>
+            <img src="./data/intro.png" style="display: block; margin: 12px auto; max-width: 100%;" />
+          </div>
+        </div>
+      </div>
 
-    <button id="reset-view" style="margin-bottom: 10px;">🔄 Reset View</button>
+      <div class="column right-column">
+        <div id="chart"></div>
+      </div>
+    </div>
   </div>
 
+  <!-- tooltip -->
   <div id="tooltip" class="tooltip"></div>
 
-  <div id="chart"></div>
+  <!-- 滚动提示 -->
+  <div id="click-anywhere-tip" class="continue-hint hidden">
+    Click anywhere to continue
+  </div>
 
-  <div id="chart"></div>
-
-  <section class="writeup">
-    <h2>Project Writeup</h2>
-    <h3>1. What have we done so far?</h3>
-    <p>
-      So far, we have built the structural framework of the webpage and completed the introductory animation section.We loaded and parsed the cleaned CSV, extracted HbA1c, grow_in_glu, and Gender fields, and computed three equally sized HbA1c groups (Low/Mid/High).We Set up SVG canvas with appropriate margins and scales,wrote a kernel density estimator and computed density curves for each HbA1c group in violin plot and Grouped data by gender (Male/Female) and calculated five-number summaries (Q1, Median, Q3, whisker bounds) in boxplot.Drew whiskers, boxes, and median lines using SVG primitives.We have also preprocessed the dataset and manually corrected issues with formatting and inconsistent values. Based on the cleaned data, We trained a model to simulate glucose trends in response to different foods. Using this model, We created a visualization that shows how glucose levels change across different individuals after eating. Additionally, we designed and implemented the user interface for selecting specific individuals and dates. The page also includes a chart that updates dynamically based on user input. This interactive design helps users explore personalized glucose responses. I also implemented tooltips and a reset function to enhance usability.
-    </p>
-
-    <h3>2. What will be the most challenging part of our project to design and why?</h3>
-    <p>
-      One challenging aspect is designing smooth, meaningful animation transitions that enhance rather than distract from the user experience. It's also difficult to strike a balance between storytelling and visualization—presenting medical or biological insights in a way that feels narrative-driven yet data-accurate. Another major challenge lies in data interpretation: glucose responses vary greatly between individuals, so extracting useful patterns without overfitting is tricky. Finally, implementing intuitive, responsive interactions (like brushing, filtering, or adaptive scaling) in the D3-based visualization requires careful coding and user experience testing. All of these elements must work seamlessly together to deliver an engaging and informative experience.When choosing the KDE bandwidth and quantile cutoffs affects the violin shape; we need to experiment to avoid over- or under-smoothing.When rendering density curves and box elements on large datasets can introduce lag. We must optimize data joins and re-use path generators.
-    </p>
+  <!-- 动画过渡场景 -->
+  <section class="fullscreen-scene hidden" id="next-scene">
+    <div class="next-scene-content glass-box">
+    <div id="typed-container"></div>
+    <button id="show-trend-btn" class="slide-in-button hidden">→ Explore Group Trends</button>
+  </div>
   </section>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="./js/glu_visual.js"></script>
+  <script src="./js/script.js"></script>
+  <script>
+    // 滚动检测
+    window.addEventListener('scroll', () => {
+      const tip = document.getElementById('click-anywhere-tip');
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        tip.classList.remove('hidden');
+      }
+    });
+  
+    // 点击继续
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+      transitionToTypingScene();
+    });
+  
+    function transitionToTypingScene() {
+      document.querySelector('.container').classList.add('fade-out');
+      document.getElementById('click-anywhere-tip').classList.add('fade-out');
+  
+      setTimeout(() => {
+        document.querySelector('.container').style.display = 'none';
+        document.getElementById('click-anywhere-tip').style.display = 'none';
+        const scene = document.getElementById('next-scene');
+        scene.classList.remove('hidden');
+        scene.classList.add('fade-in');
+        startTypingSequence();
+      }, 800);
+    }
+  
+    // ✅ 台词动画：替换为你提供的四句对白
+    function startTypingSequence() {
+      const lines = [
+        "We’ve seen how glucose levels rise and fall throughout the day,",
+        "and how those patterns vary from person to person and meal to meal.",
+        "So what happens when we zoom out and look at many people at once?",
+        "Let’s explore the broader patterns hidden in group glucose data..."
+      ];
+      const container = document.getElementById('typed-container');
+      let lineIndex = 0;
+  
+      function typeLine(line, callback) {
+        const lineWrapper = document.createElement('div');
+        lineWrapper.className = 'dialogue-line';
+  
+        const textSpan = document.createElement('span');
+        textSpan.className = 'dialogue-text typing';
+        lineWrapper.appendChild(textSpan);
+        container.appendChild(lineWrapper);
+  
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < line.length) {
+            textSpan.textContent = line.substring(0, i + 1);
+            i++;
+          } else {
+            clearInterval(interval);
+            textSpan.classList.remove('typing');
+            setTimeout(callback, 800);
+          }
+        }, 40);
+      }
+  
+      function showNextLine() {
+        if (lineIndex < lines.length) {
+          typeLine(lines[lineIndex], () => {
+            lineIndex++;
+            showNextLine();
+          });
+        } else {
+          setTimeout(() => {
+            const btn = document.getElementById('show-trend-btn');
+            btn.classList.remove('hidden');
+            btn.classList.add('visible');
+            btn.onclick = () => {
+              window.location.href = './part5.html';
+            };
+          }, 1000);
+        }
+      }
+  
+      showNextLine();
+    }
+  </script>
 </body>
 </html>
