@@ -43,7 +43,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="main-container">
 
     <div class="title-wrapper">
       <h1 class="main-title">How does glucose change throughout the day?</h1>
@@ -87,6 +87,71 @@
         <div id="chart"></div>
       </div>
     </div>
+    <div class="title-wrapper2">
+      <h1 class="main-title2">How does nutrition shape your glucose curve?</h1>
+      <div class="subtitle2">Predicting blood sugar trends based on food composition</div>
+    </div>
+  <!-- glucose prediction section -->
+  <div class="two-column-layout2">
+    <!-- 左边：模拟图 -->
+    <div class="column left-column2">
+      <svg id="glucose-plot" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <!-- 右边：输入表单 + story -->
+    <div class="column right-column2">
+      <div class="control-card2">
+        <form id="input-form" class="two-col-form">
+          <label><span>Calorie:</span> <input type="number" id="calorie" value="410"></label>
+          <label><span>Total Carbohydrates:</span> <input type="number" id="total_carb" value="83"></label>
+          <label><span>Sugar:</span> <input type="number" id="sugar" value="66"></label>
+          <label><span>Protein:</span> <input type="number" id="protein" value="13"></label>
+          <label><span>Total Fat:</span> <input type="number" id="total_fat" value="0"></label>
+          <label><span>Dietary Fiber:</span> <input type="number" id="dietary_fiber" value="0"></label>
+          <label><span>HbA1c:</span> <input type="number" id="hba1c" value="5.6" step="0.1"></label>
+          <label><span>Initial Glucose:</span> <input type="number" id="init_val" value="138" step="1"></label>
+          <label><span>Gender:</span>
+            <select id="gender">
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+            </select>
+          </label>
+          <button type="button" id="predict-button">Predict</button>
+        </form>
+      </div>
+
+      <!-- 预留：story 可视化解释部分 -->
+      <div class="instruction-card">
+        <div class="instruction2">
+          <p>
+            While everyone experiences blood sugar changes throughout the day, the <b>exact shape of your glucose curve depends heavily on what you eat</b>.
+          </p>
+          
+          <p>
+            This visualization lets you explore how different nutritional components—like carbohydrates, sugar, protein, and fat—affect your blood glucose trends after a meal.
+          </p>
+          
+          <p>
+            For example, suppose <b>Alice</b> just had a meal that included:
+            <ul>
+              <li>🍚 <b>White rice</b> – high in carbohydrates and sugar</li>
+              <li>🍗 <b>Grilled chicken</b> – rich in protein</li>
+              <li>🍎 <b>Apple</b> – contains sugar and fiber</li>
+            </ul>
+            We can input the approximate nutritional values: 410 kcal, 83g total carbs, 66g sugar, 13g protein, and minimal fat and fiber.
+          </p>
+          
+          <p>
+            Try adjusting these values in the panel to the right. Watch how the <b>glucose prediction curve</b> changes in real-time.
+          </p>
+          
+          <p>
+            <b>Can you predict how adding more fiber or reducing sugar would change the shape?</b> Try it and see!
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
   </div>
 
   <!-- tooltip -->
@@ -107,6 +172,7 @@
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="./js/script.js"></script>
+  <script src="js/model.js"></script>
   <script>
     // 滚动检测
     window.addEventListener('scroll', () => {
@@ -118,9 +184,16 @@
   
     // 点击继续
     document.addEventListener('click', (e) => {
-      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-      transitionToTypingScene();
-    });
+  const container = document.getElementById('main-container');
+  const isInsideContainer = container.contains(e.target);
+
+  const isButton = e.target.tagName === 'BUTTON' || e.target.closest('button');
+
+  // 只有点击在 container 外部且不是按钮时才触发
+  if (!isInsideContainer && !isButton) {
+    transitionToTypingScene();
+  }
+});
   
     function transitionToTypingScene() {
       document.querySelector('.container').classList.add('fade-out');
@@ -138,6 +211,7 @@
   
     // ✅ 台词动画：替换为你提供的四句对白
     function startTypingSequence() {
+      console.log("🟢 startTypingSequence() triggered");
       const lines = [
         "We’ve seen how glucose levels rise and fall throughout the day,",
         "and how those patterns vary from person to person and meal to meal.",

@@ -62,6 +62,10 @@ body, html {
   .main-title .sparkle {
     animation-delay: 0.6s;
   }
+
+
+
+  
   
   /* 子标题打字动画 */
   .subtitle {
@@ -85,6 +89,67 @@ body, html {
       opacity: 0;
       transform: scale(0.98);
     }
+  }
+
+
+
+  .title-wrapper2 {
+    text-align: right;        /* ✅ 整体右对齐 */
+    margin: 0 40px 20px auto; /* ✅ 向右推，左边自动 */
+  }
+  
+  /* 主标题闪动渐变 */
+  .main-title2 {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ade80);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shineGradient 4s ease-in-out infinite;
+    display: inline-block;
+  }
+  
+  /* 图标与文字动画效果 */
+  .main-title2 .icon,
+  .main-title2 .sparkle {
+    opacity: 0;
+    transform: scale(0.5);
+    display: inline-block;
+    animation: popFadeIn 0.8s ease-out forwards;
+  }
+  
+  .main-title2 .icon {
+    animation-delay: 0.2s;
+  }
+  .main-title2 .sparkle {
+    animation-delay: 0.6s;
+  }
+  
+  /* 子标题打字动画 - 右对齐 */
+  .subtitle2 {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    color: #2E7D32;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid rgba(0,0,0,0.2);
+    width: fit-content;
+    animation: typing 3.5s steps(40, end), blink 0.7s step-end infinite;
+    margin-top: 8px;
+    margin-left: auto;
+    margin-right: 10px;
+    text-align: right;
+    display: block;
+  }
+  
+  /* 打字动画 */
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  @keyframes blink {
+    50% { border-color: transparent }
   }
   
   /* ---------- 动画定义区 ---------- */
@@ -226,6 +291,107 @@ body, html {
     width: 100%;
     height: auto;
   }
+
+
+  /* ✅ 两栏布局（控件+说明 | 图表） */
+  .two-column-layout2 {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: stretch;
+  }
+  
+  /* 左栏（控件 + 说明） */
+  .left-column2 {
+    flex: 2;
+    min-width: 400px;
+    position: relative;
+    background: #fbfffc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    box-sizing: border-box;
+    height: 680px; /* ✅ 设置一个合适的固定高度，可按需调整 */
+    overflow: hidden;
+    
+  }
+  #glucose-plot {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .two-col-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    row-gap: 12px;
+  }
+  
+  .two-col-form label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .two-col-form input,
+  .two-col-form select {
+    margin-top: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  #predict-button {
+    grid-column: span 2;
+    padding: 10px;
+    font-size: 15px;
+    margin-top: 6px;
+  }
+  /* 说明区域 */
+  .instruction2 {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #444;
+    background: #fbfffc;
+  }
+  .instruction2 p {
+    margin-bottom: 12px;
+  }
+  
+  /* 右栏（图表展示） */
+  .right-column2 {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1.3;
+    min-width: 280px;
+    /* background: #f5fff8; */
+    background: #fbfffc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    box-sizing: border-box;
+    height: 680px;
+    
+  }
+  
+  #chart {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+  #chart svg {
+    width: 100%;
+    height: auto;
+  }
+  
   
   /* tooltip 样式 */
   .tooltip {
@@ -389,17 +555,19 @@ body, html {
     background-color: red;
   }
 
-  .continue-hint {
-    position: fixed;
-    bottom: 5vh;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.3rem;
-    color: #888;
+  #click-anywhere-tip {
+    text-align: center;
+    font-size: 1rem;
     font-style: italic;
-    animation: fadeInHint 1s ease 1.2s forwards;
+    color: #777;
+    margin: 4rem auto 2rem;
     opacity: 0;
-    z-index: 1000;
+    transition: opacity 0.5s ease;
+  }
+  
+  /* 当它不再 hidden 时显示出来 */
+  #click-anywhere-tip:not(.hidden) {
+    opacity: 1;
   }
 
 

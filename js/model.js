@@ -1,6 +1,5 @@
 // predictor.js (fixed for accurate polynomial term computation)
 
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
 let model = null;
 let scaler = null;
@@ -106,8 +105,9 @@ function drawPlot(data) {
   svg.selectAll("*").remove(); // Clear old contents
 
   const margin = { top: 30, right: 30, bottom: 50, left: 60 };
-  const outerWidth = +svg.attr("width");
-  const outerHeight = +svg.attr("height");
+  const boundingBox = svg.node().getBoundingClientRect();
+  const outerWidth = boundingBox.width;
+  const outerHeight = boundingBox.height;
   const width = outerWidth - margin.left - margin.right;
   const height = outerHeight - margin.top - margin.bottom;
 
