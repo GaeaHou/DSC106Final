@@ -249,7 +249,7 @@ d3.csv("./data/dexcom_with_food_updated.csv").then(rawData => {
           .on("mouseover", function (event, d) {
             const hour = d.timestamp.getHours();
             const isDay = hour >= 6 && hour < 18;
-            const iconPath = isDay ? "image/sun.png" : "image/moon.png";
+            const iconPath = isDay ? "./data/sun.png" : "./data/moon.png";
           
             let html = `
               <div style="position: relative;">
