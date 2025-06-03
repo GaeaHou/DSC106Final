@@ -12,6 +12,7 @@
   <!-- Custom Styles -->
   <link rel="stylesheet" href="part5.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -336,9 +337,83 @@
           Diagnosis and Prevalence Based on Fasting Glucose and Hemoglobin A1c</a></li>
     </ol>
   </section>
+  <!-- 滚动提示 -->
+  <div id="click-anywhere-tip" class="continue-hint hidden">
+    Click anywhere to the end
+  </div>
+
+  <!-- Fullscreen Outro Scene -->
+<section class="fullscreen-scene hidden" id="final-scene">
+  <div class="final-content">
+    <!-- Left: Amy waving image -->
+    <div class="final-image">
+      <img src="./data/Alice_wave.png" alt="Alice waving" />
+    </div>
+
+    <!-- Right: Message content -->
+    <div class="final-text-modern">
+      <div class="summary-item">
+        <span class="emoji">📊</span>
+        <p><strong>We’ve explored</strong> how <span class="highlight">HbA1c</span> connects to early diabetes risk.</p>
+      </div>
+    
+      <div class="summary-item">
+        <span class="emoji">🔍</span>
+        <p>And how <strong class="highlight">age, gender, lifestyle and diet</strong> all contribute.</p>
+      </div>
+    
+      <div class="summary-item">
+        <span class="emoji">💡</span>
+        <p>The takeaway? <em>Personalized choices matter.</em></p>
+      </div>
+    
+      <div class="summary-item highlight-box">
+        <span class="emoji">💚</span>
+        <p><strong>Now it’s your turn — make decisions that work best for your health.</strong></p>
+      </div>
+    
+      <button id="end-btn" class="modern-button">⇢ Back to Homepage</button>
+    </div>
+</section>
 
   <!-- Include custom script -->
   <script src="./js/part5.js"></script>
+  <script>
+    // 检测滚动到页面底部
+    window.addEventListener('scroll', () => {
+      const tip = document.getElementById('click-anywhere-tip');
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        tip.classList.remove('hidden');
+      }
+    });
+
+    // 点击任意非按钮区域触发结尾动画
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+      transitionToFinalScene();
+    });
+
+    function transitionToFinalScene() {
+  const tip = document.getElementById('click-anywhere-tip');
+  const conclusion = document.getElementById('conclusion');
+  const finalScene = document.getElementById('final-scene');
+
+  conclusion.classList.add('fade-out');
+  tip.classList.add('fade-out');
+
+  setTimeout(() => {
+    conclusion.style.display = 'none';
+    tip.style.display = 'none';
+    finalScene.classList.remove('hidden');
+    finalScene.classList.add('fade-in');
+  }, 800);
+}
+
+    // 按钮跳转
+    document.getElementById('end-btn').onclick = () => {
+      window.location.href = "https://gaeahou.github.io/DSC106Final/";
+    };
+  </script>
 </body>
 
 </html>
