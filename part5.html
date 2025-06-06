@@ -389,10 +389,21 @@
     });
 
     // 点击任意非按钮区域触发结尾动画
-    document.addEventListener('click', (e) => {
-      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-      transitionToFinalScene();
-    });
+    
+document.addEventListener('click', (e) => {
+
+  // 排除按钮
+  if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+
+  // ✅ 排除 select 和交互容器
+  const excludedSelectors = ['select', '#caseVarSelect', '#casePlot', '#violinPlot', '#genderBoxPlot', '#riskBar', '#thresholdSliderContainer', '#histogram'];
+  for (const selector of excludedSelectors) {
+    const el = document.querySelector(selector);
+    if (el && el.contains(e.target)) return;
+  }
+
+  transitionToFinalScene();
+});
 
     function transitionToFinalScene() {
   const tip = document.getElementById('click-anywhere-tip');

@@ -117,6 +117,7 @@
 
   <script>
     const meal = { protein: null, carb: null, veg: null };
+    let hasTypedStarted = false;  // ✅ 控制台词只触发一次
   
     window.selectFood = function(type, item) {
       meal[type] = item;
@@ -157,7 +158,6 @@
         document.getElementById('meal-select').classList.add('fade-in');
       }, 500);
   
-      // Reset meal
       meal.protein = null;
       meal.carb = null;
       meal.veg = null;
@@ -176,11 +176,12 @@
       const realArea = document.getElementById('real-curve-area');
       if (realArea) realArea.classList.add('hidden');
   
-      // 🎯 Reset canvas state
       if (typeof initCurve === "function") initCurve();
       if (typeof realCtx !== "undefined" && typeof realCanvas !== "undefined") {
         realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
       }
+  
+      hasTypedStarted = false; // ✅ 重置台词触发标志
     }
   
     window.addEventListener('DOMContentLoaded', () => {
@@ -194,7 +195,7 @@
       }, 3500);
     });
   
-    // ✅ 添加点击空白区域切换到下一个场景的逻辑
+    // ✅ 改动：只触发一次台词动画
     document.addEventListener('click', function (e) {
       const target = e.target;
       if (target.tagName === 'BUTTON' || target.tagName === 'CANVAS') return;
@@ -202,93 +203,78 @@
       const glucoseScene = document.getElementById('glucose-predict');
       const realCurveShown = !document.getElementById('real-curve-area').classList.contains('hidden');
   
-      if (!glucoseScene.classList.contains('hidden') && realCurveShown) {
+      if (!glucoseScene.classList.contains('hidden') && realCurveShown && !hasTypedStarted) {
+        hasTypedStarted = true;
         goToNextScene();
       }
     });
   
-    // ✅ 场景切换函数
     function goToNextScene() {
       const current = document.getElementById('glucose-predict');
       const next = document.getElementById('next-scene');
   
-      current.classList.add('fade-out');
+      current.classList.remove('fade-in');
+      current.classList.add('zoom-out-fade');
+  
       setTimeout(() => {
         current.classList.add('hidden');
         next.classList.remove('hidden');
-        next.classList.add('fade-in');
+        next.classList.add('zoom-in-fade');
+        startTypingSequence();
       }, 800);
     }
-
-    function goToNextScene() {
-  const current = document.getElementById('glucose-predict');
-  const next = document.getElementById('next-scene');
-
-  current.classList.remove('fade-in');
-  current.classList.add('zoom-out-fade');
-
-  setTimeout(() => {
-    current.classList.add('hidden');
-    next.classList.remove('hidden');
-    next.classList.add('zoom-in-fade');
-
-    // 启动台词打字动画
-    startTypingSequence();
-  }, 800);
-}
-
-function startTypingSequence() {
-  const lines = [
-    "“Hmm... this is just one possibility.”",
-    "“But in the real world, it may look quite different for different people.”",
-    "“Now, let's explore how people's glucose levels change over time in the real world.”"
-  ];
-  const container = document.getElementById('typed-container');
-  let lineIndex = 0;
-
-  function typeLine(line, callback) {
-    const lineWrapper = document.createElement('div');
-    lineWrapper.className = 'dialogue-line';
-
-    const textSpan = document.createElement('span');
-    textSpan.className = 'dialogue-text typing'; // 白底 + 光标
-    lineWrapper.appendChild(textSpan);
-    container.appendChild(lineWrapper);
-
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < line.length) {
-        textSpan.textContent = line.substring(0, i + 1);
-        i++;
-      } else {
-        clearInterval(interval);
-        textSpan.classList.remove('typing'); // 去除光标
-        setTimeout(callback, 1000);
+  
+    function startTypingSequence() {
+      const lines = [
+        "“Hmm... this is just one possibility.”",
+        "“But in the real world, it may look quite different for different people.”",
+        "“Now, let's explore how people's glucose levels change over time in the real world.”"
+      ];
+      const container = document.getElementById('typed-container');
+      let lineIndex = 0;
+  
+      function typeLine(line, callback) {
+        const lineWrapper = document.createElement('div');
+        lineWrapper.className = 'dialogue-line';
+  
+        const textSpan = document.createElement('span');
+        textSpan.className = 'dialogue-text typing';
+        lineWrapper.appendChild(textSpan);
+        container.appendChild(lineWrapper);
+  
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < line.length) {
+            textSpan.textContent = line.substring(0, i + 1);
+            i++;
+          } else {
+            clearInterval(interval);
+            textSpan.classList.remove('typing');
+            setTimeout(callback, 1000);
+          }
+        }, 40);
       }
-    }, 40);
-  }
-
-  function showNextLine() {
-    if (lineIndex < lines.length) {
-      typeLine(lines[lineIndex], () => {
-        lineIndex++;
-        showNextLine();
-      });
-    } else {
-      setTimeout(() => {
-        const btn = document.getElementById('show-trend-btn');
-        btn.classList.remove('hidden');
-        btn.classList.add('visible');
-        btn.onclick = () => {
-          window.location.href = './glucose-visualization.html';
-        };
-      }, 1000);
+  
+      function showNextLine() {
+        if (lineIndex < lines.length) {
+          typeLine(lines[lineIndex], () => {
+            lineIndex++;
+            showNextLine();
+          });
+        } else {
+          setTimeout(() => {
+            const btn = document.getElementById('show-trend-btn');
+            btn.classList.remove('hidden');
+            btn.classList.add('visible');
+            btn.onclick = () => {
+              window.location.href = './glucose-visualization.html';
+            };
+          }, 1000);
+        }
+      }
+  
+      showNextLine();
     }
-  }
-
-  showNextLine();
-}
- 
   </script>
   <script src="./js/draw.js"></script>
 </body>

@@ -174,7 +174,9 @@
   <script src="./js/script.js"></script>
   <script src="./js/model.js"></script>
   <script>
-    // 滚动检测
+    let hasTypingStarted = false; // ✅ 添加布尔标志，避免重复触发
+  
+    // 滚动检测，显示提示
     window.addEventListener('scroll', () => {
       const tip = document.getElementById('click-anywhere-tip');
       if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
@@ -182,18 +184,18 @@
       }
     });
   
-    // 点击继续
+    // 点击继续（仅第一次点击生效）
     document.addEventListener('click', (e) => {
-  const container = document.getElementById('main-container');
-  const isInsideContainer = container.contains(e.target);
-
-  const isButton = e.target.tagName === 'BUTTON' || e.target.closest('button');
-
-  // 只有点击在 container 外部且不是按钮时才触发
-  if (!isInsideContainer && !isButton) {
-    transitionToTypingScene();
-  }
-});
+      if (hasTypingStarted) return; // ✅ 已触发过则不再响应
+      const container = document.getElementById('main-container');
+      const isInsideContainer = container.contains(e.target);
+      const isButton = e.target.tagName === 'BUTTON' || e.target.closest('button');
+  
+      if (!isInsideContainer && !isButton) {
+        hasTypingStarted = true; // ✅ 设置为已触发
+        transitionToTypingScene();
+      }
+    });
   
     function transitionToTypingScene() {
       document.querySelector('.container').classList.add('fade-out');
@@ -209,7 +211,6 @@
       }, 800);
     }
   
-    // ✅ 台词动画：替换为你提供的四句对白
     function startTypingSequence() {
       console.log("🟢 startTypingSequence() triggered");
       const lines = [
