@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ======================================================
   function drawHistogram(data) {
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
-    const width = 800 - margin.left - margin.right;
+    const width = 600 - margin.left - margin.right;
     const height = 350 - margin.top - margin.bottom;
   
     const svg = d3.select('#histogram')
@@ -158,6 +158,25 @@ document.addEventListener('DOMContentLoaded', () => {
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x));
+
+    // 添加辅助线（HbA1c = 6.5）
+    svg.append('line')
+    .attr('x1', x(6.5))
+    .attr('x2', x(6.5))
+    .attr('y1', 0)
+    .attr('y2', height)
+    .attr('stroke', '#ef6c00')
+    .attr('stroke-width', 2)
+    .attr('stroke-dasharray', '4 4');
+
+    // 添加标注文字
+    svg.append('text')
+    .attr('x', x(6.5) + 6)
+    .attr('y', 15)
+    .attr('fill', '#ef6c00')
+    .style('font-size', '12px')
+    .style('font-weight', 'bold')
+    .text('Diabetes Threshold (6.5%)');
   
     // 绘制 Y 轴
     const yAxis = svg.append('g')
@@ -269,8 +288,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------
     {
       const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-      const width = 800 - margin.left - margin.right;
-      const height = 350 - margin.top - margin.bottom;
+      const width = 500 - margin.left - margin.right;
+      const height = 250 - margin.top - margin.bottom;
   
       const svg = d3.select('#violinPlot')
         .append('svg')
@@ -379,8 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------
     {
       const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-      const width = 800 - margin.left - margin.right;
-      const height = 350 - margin.top - margin.bottom;
+      const width = 500 - margin.left - margin.right;
+      const height = 250 - margin.top - margin.bottom;
   
       const svg = d3.select('#genderBoxPlot')
         .append('svg')

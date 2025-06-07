@@ -106,11 +106,21 @@
   </section>
 
   <section class="fullscreen-scene hidden" id="next-scene">
-    <div class="next-scene-content glass-box">
-      <div id="typed-container"></div>
-      <button id="show-trend-btn" class="hidden slide-in-button" onclick="location.href='glucose-visualization.html'">
-        → Show Real Glucose Trends
-      </button>
+    <div class="next-scene-grid">
+      
+      <!-- 左侧：Alice 图片 -->
+      <div class="alice-column">
+        <img src="./data/Alicequestion.png" alt="Alice thinking" class="alice-fixed-image" />
+      </div>
+  
+      <!-- 右侧：台词动画 -->
+      <div class="text-column  glass-box">
+        <div id="typed-container" class="typed-scroll-box"></div>
+        <button id="show-trend-btn" class="hidden slide-in-button" onclick="location.href='glucose-visualization.html'">
+          → Show Real Glucose Trends
+        </button>
+      </div>
+  
     </div>
   </section>
   
@@ -226,9 +236,10 @@
   
     function startTypingSequence() {
       const lines = [
-        "“Hmm... this is just one possibility.”",
-        "“But in the real world, it may look quite different for different people.”",
-        "“Now, let's explore how people's glucose levels change over time in the real world.”"
+        "“Hmm... You thought this was a healthy meal — and it was.”",
+        "“But if someone else ate it, would their blood sugar be the same?”",
+        "“Let’s see how people’s blood sugar shifts throughout the day.”",
+        "“And how food, timing, and our bodies all play a role.”"
       ];
       const container = document.getElementById('typed-container');
       let lineIndex = 0;

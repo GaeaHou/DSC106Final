@@ -20,200 +20,199 @@
   <!-- ==============================
        0. Hero Section
        ============================== -->
-  <section id="hero" class="hero-section">
-    <div class="hero-text">
-      <h1 class="hero-title">
-        The Role of <span class="highlight">HbA1c</span> in Diabetes Prediction
+       <h1 class="hero-title">
+        Introducing <span class="highlight">HbA1c</span> — A <span class="highlight">Long-Term</span> Window into Blood Sugar
       </h1>
-      <p class="hero-subtitle">
-        Exploring how HbA1c levels vary across age groups and genders, and their implications for early diabetes risk.
-      </p>
-      <div class="hero-buttons">
-        <a href="https://www.kaggle.com/datasets/iammustafatz/diabetes-prediction-dataset" class="btn btn-primary"
-          target="_blank" rel="noopener noreferrer">
-          Dataset
-        </a>
-        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4933534/" class="btn btn-secondary" target="_blank"
-          rel="noopener noreferrer">
-          Learn More
-        </a>
-      </div>
-    </div>
-
-    <div class="hero-graphic">
-      <div class="graphic-container">
-        <div class="carousel">
-          <div class="slide active">
-            <img src="./data/slide1.png" alt="3D Render of Red Blood Cells" />
-          </div>
-          <div class="slide">
-            <img src="./data/slide2.png" alt="Illustration of High vs Low HbA1c" />
-          </div>
-          <div class="slide">
-            <img src="./data/slide3.png" alt="Illustration of Normal vs High Blood Glucose" />
-          </div>
-          <div class="slide">
-            <img src="./data/slide4.png" alt="Blood Glucose Meter Illustration" />
+      
+      <section id="hero" class="hero-section">
+        <div class="hero-text">
+          <p class="hero-subtitle">
+            To explore how long-term blood sugar relates to diabetes risk,
+              we turn to a real-world dataset of over 10,000 individuals 
+              — giving us a broader view beyond moment-to-moment fluctuations.
+          </p>
+          <div class="hero-buttons">
+            <a href="#intro" class="btn btn-primary">Explore the Data</a>
+            <a href="https://www.kaggle.com/datasets/iammustafatz/diabetes-prediction-dataset" class="btn btn-secondary" target="_blank">View Dataset</a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
+      
+        <div class="hero-graphic">
+          <div class="graphic-container">
+            <div class="carousel">
+              <div class="slide active">
+                <img src="./data/slide1.png" alt="3D Render of Red Blood Cells" />
+              </div>
+              <div class="slide">
+                <img src="./data/slide2.png" alt="Illustration of High vs Low HbA1c" />
+              </div>
+              <div class="slide">
+                <img src="./data/slide3.png" alt="Illustration of Normal vs High Blood Glucose" />
+              </div>
+              <div class="slide">
+                <img src="./data/slide4.png" alt="Blood Glucose Meter Illustration" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
   <!-- ==============================
        1. Introduction Section
        ============================== -->
-  <section id="intro" class="section-container">
-    <h1>What Is HbA1c and Why Does It Matter?</h1>
-    <p>
-      HbA1c (glycated hemoglobin) is a biomarker formed when glucose binds to hemoglobin in red blood cells. Because
-      red blood cells live for about 120 days, HbA1c provides a reliable measure of average blood glucose levels over
-      the preceding 2–3 months. Clinically, HbA1c is widely used to diagnose diabetes, identify prediabetes, and
-      monitor long-term glycemic control.
-      <br /><br />
-      <strong>Normal range:</strong> HbA1c &lt; 5.7%<br />
-      <strong>Prediabetes (high risk):</strong> 5.7% ≤ HbA1c &lt; 6.5%<br />
-      <strong>Diabetes diagnosis:</strong> HbA1c ≥ 6.5%
-    </p>
-    <p>
-      In this interactive visualization, we will explore:
-    <ol>
-      <li>Population-level distribution of HbA1c</li>
-      <li>How HbA1c varies across defined age groups</li>
-      <li>Comparison of HbA1c by gender (male vs. female)</li>
-      <li>The relationship between HbA1c and the probability of developing type 2 diabetes</li>
-      <li>The relationship between individual binary variables (e.g., HighBP, HighChol, Smoker) and HbA1c/diabetes
-        status</li>
-    </ol>
-    </p>
-  </section>
+       <section id="intro" class="section-container">
+        <h1>What Is HbA1c and Why Does It Matter?</h1>
+      
+        <div class="intro-grid">
+          <div class="intro-explainer">
+            <p>
+              HbA1c (glycated hemoglobin) is a biomarker formed when glucose binds to hemoglobin in red blood cells.
+              Because red blood cells live for about 120 days, HbA1c provides a reliable measure of average blood glucose
+              over the past 2–3 months. It is widely used to diagnose diabetes, detect prediabetes, and monitor long-term glycemic control.
+            </p>
+          </div>
+          <div class="intro-numbers">
+            <p><strong>Normal:</strong> HbA1c &lt; 5.7%</p>
+            <p><strong>Prediabetes:</strong> 5.7% ≤ HbA1c &lt; 6.5%</p>
+            <p><strong>Diabetes:</strong> HbA1c ≥ 6.5%</p>
+          </div>
+        </div>
+      
+        <div class="intro-insights">
+          <h2>In this visualization, we'll explore:</h2>
+          <p class="insight-lead">Each step helps reveal how HbA1c interacts with personal and clinical factors.</p>
+          <ul class="insight-list">
+            <li>📊 Population-level distribution of HbA1c</li>
+            <li>🎂 Variation by age group</li>
+            <li>⚥ Comparison by gender</li>
+            <li>📈 HbA1c vs. type 2 diabetes risk</li>
+            <li>🥦 Links between lifestyle factors and HbA1c</li>
+          </ul>
+        </div>
+      </section>
 
   <!-- ==============================
        2. Population-Level HbA1c Distribution
        ============================== -->
-  <section id="dist" class="section-container">
-    <div class="two-column">
-      <!-- Left: Key Statistics -->
-      <div class="summary-text">
-        <h2>Key Statistics</h2>
-        <p>
-          <strong>Dataset Overview:</strong><br />
-          This dataset includes <strong>10,000 participants</strong> with recorded HbA1c measurements and demographic
-          attributes (age, gender, etc.). We categorized each participant into one of three clinical statuses:
-          normal, prediabetes, or diabetes.
+       <section id="dist" class="section-container">
+        <p class="narration">
+          “This is where things get interesting — most people fall into a safe zone — but as we approach 6.5%, the risk rises sharply.”
         </p>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <h3>10,000</h3>
-            <p>Total Participants</p>
+        <div class="two-column">
+          <!-- Left: Key Statistics -->
+          <div class="summary-text">
+            <h2>Key Statistics</h2>
+            <p>
+              We collected data from <strong><span class="highlight">10,000 individuals</span></strong>—each with a recorded HbA1c level and basic demographics like age and gender.
+              To make sense of this, we grouped them into three clinical categories:
+              <strong><span class="highlight">normal</span></strong>,
+              <strong><span class="highlight">prediabetes</span></strong>, and
+              <strong><span class="highlight">diabetes</span></strong>.
+              This gives us a clearer view of <strong>where most people fall</strong>—and <strong class="highlight">where the risk begins</strong>.
+            </p>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <h3>10,000</h3>
+                <p>Total Participants</p>
+              </div>
+              <div class="stat-item">
+                <h3>7,200</h3>
+                <p>Normal<br />(HbA1c &lt; 5.7%)</p>
+              </div>
+              <div class="stat-item">
+                <h3>2,100</h3>
+                <p>Prediabetes<br />(5.7 ≤ HbA1c &lt; 6.5)</p>
+              </div>
+              <div class="stat-item">
+                <h3>700</h3>
+                <p>Diabetes<br />(HbA1c ≥ 6.5)</p>
+              </div>
+            </div>
           </div>
-          <div class="stat-item">
-            <h3>7,200</h3>
-            <p>Normal<br />(HbA1c &lt; 5.7%)</p>
-          </div>
-          <div class="stat-item">
-            <h3>2,100</h3>
-            <p>Prediabetes<br />(5.7 ≤ HbA1c &lt; 6.5)</p>
-          </div>
-          <div class="stat-item">
-            <h3>700</h3>
-            <p>Diabetes<br />(HbA1c ≥ 6.5)</p>
+      
+          <!-- Right: Histogram Container -->
+          <div class="chart-container">
+            <h2>Where Does Risk Begin?</h2>
+            <p class="chart-callout">
+              This distribution shows how HbA1c values are spread — and why <strong>6.5%</strong> matters.
+            </p>
+            <div id="histogram"></div>
+            <p class="caption">
+              Figure 1. Distribution of HbA1c values across the entire cohort.
+            </p>
           </div>
         </div>
-      </div>
-
-      <!-- Right: Histogram Container -->
-      <div class="chart-container">
-        <h2>Population-Level HbA1c Distribution</h2>
-        <div id="histogram"></div>
-        <p class="caption">
-          Figure 1. Distribution of HbA1c values across the entire cohort.
-        </p>
-      </div>
-    </div>
-  </section>
-
+      </section>
   <!-- ==============================
        3. Age & Gender Analysis (Violin & Box Plots)
        ============================== -->
-  <section id="ageViolin" class="section-container">
-    <div class="two-column">
-      <!-- Left: Description -->
-      <div class="summary-text">
-        <h2>Age & Gender Analysis</h2>
-        <p>
-          To understand how HbA1c distribution varies across different population segments, we performed two analyses:
-        </p>
-        <ul>
-          <li>
-            <strong>Age-Group Violin Plot:</strong> We divided the cohort into four age brackets: 0–20, 20–40, 40–60,
-            and 60–80. For each bracket, we plotted a violin chart to show the density distribution of HbA1c values.
-          </li>
-          <li>
-            <strong>Gender Box Plot:</strong> We segregated participants by gender (Male vs. Female) and created box
-            plots showing median, interquartile range, and whiskers based on standard 1.5×IQR rules.
-          </li>
-        </ul>
-        <p>
-          These plots reveal minimal differences between age groups and between genders in terms of median HbA1c values
-          and distribution shapes.
-        </p>
-      </div>
-
-      <!-- Right: Violin & Box Plots -->
-      <div class="chart-container">
-        <h2>HbA1c by Age Group & Gender</h2>
-
-        <!-- Violin Plot -->
-        <div id="violinPlot"></div>
-        <p class="caption">Figure 2a. Violin Plot: HbA1c Distribution by Age Group</p>
-
-        <!-- Box Plot -->
-        <div id="genderBoxPlot" style="margin-top: 2rem;"></div>
-        <p class="caption">Figure 2b. Box Plot: HbA1c Distribution by Gender</p>
-      </div>
-    </div>
-  </section>
+       <section id="ageGender" class="section-container">
+        <!-- 上方标题 + 精炼说明 -->
+        
+          <p class="narration"> “Does Age or Gender Influence HbA1c?”</h2>
+          <div class="section-header">
+          <p class="section-summary">
+            Despite minor variations, <strong class="highlight">HbA1c distribution stays consistent</strong> across both age groups and genders —
+            suggesting <strong>age and gender are not key drivers</strong> of elevated risk.
+          </p>
+        </div>
+      
+        <!-- 下方左右图表排列 -->
+        <div class="chart-row">
+          <!-- Age Violin Plot -->
+          <div class="chart-block">
+            <div id="violinPlot"></div>
+            <p class="caption">Figure 2a. HbA1c Distribution by Age Group</p>
+          </div>
+      
+          <!-- Gender Box Plot -->
+          <div class="chart-block">
+            <div id="genderBoxPlot"></div>
+            <p class="caption">Figure 2b. HbA1c Distribution by Gender</p>
+          </div>
+        </div>
+      </section>
 
   <!-- ==============================
        4. HbA1c Threshold vs Diabetes Proportion (Slider + Line Chart)
        ============================== -->
   <section id="risk" class="section-container">
+    <p class="narration">“But what does a high HbA1c really mean?”</p>
+
     <div class="two-column">
-      <!-- Left: Slider & Line Chart -->
+      <!-- 左：Slider + Chart -->
       <div class="chart-container">
-        <h2>HbA1c Threshold vs Diabetes Proportion</h2>
-        <div id="thresholdSliderContainer" style="margin-bottom: 1.5rem;">
-          <label for="hbSlider">HbA1c Threshold: </label>
+        <h2>How Risk Changes with Threshold</h2>
+        <p class="chart-lead">As the threshold rises, the chance of having diabetes rises too…</p>
+  
+        <!-- slider 控制条 -->
+        <div id="thresholdSliderContainer" class="slider-row">
+          <label for="hbSlider"><strong>HbA1c Threshold:</strong></label>
           <input type="range" id="hbSlider" step="0.1" />
           <span id="thresholdValue">0.0</span>
         </div>
+  
+        <!-- 风险图 -->
         <div id="riskBar"></div>
+  
+        <!-- 图注 -->
         <p class="caption">
-          Figure 3a. Proportion of diabetes cases among participants with HbA1c ≥ threshold T.
+          Figure 3. Proportion of diabetes cases among participants with HbA1c ≥ selected threshold T.
+          <br />
+          <span class="threshold-note">6.5% is the official diagnostic cutoff for diabetes.</span>
         </p>
       </div>
-
-      <!-- Right: Explanation -->
+  
+      <!-- 右：解释说明 -->
       <div class="summary-text">
         <h2>Interpretation</h2>
         <ul>
-          <li>
-            When T is low (near the minimum HbA1c), many individuals meet the criterion, but the diabetes proportion
-            is relatively small.
-          </li>
-          <li>
-            As T increases, only those with higher HbA1c values remain, and their diabetes proportion gradually
-            increases.
-          </li>
-          <li>
-            Once T exceeds 6.5% (clinical diagnostic cutoff), the curve quickly approaches 100%, indicating almost all
-            in that subgroup have diabetes.
-          </li>
+          <li>At low thresholds, many are included but few actually have diabetes.</li>
+          <li>As the threshold increases, the proportion of diabetes cases rises steadily.</li>
+          <li>Once the threshold exceeds <strong>6.5%</strong>, most remaining individuals have diabetes — the curve rises sharply.</li>
         </ul>
         <p>
-          The chart on the left updates dynamically with the slider; text on the right explains the clinical
-          significance.
+          Use the slider to see how changing the threshold impacts the probability of diabetes in the selected group.
         </p>
       </div>
     </div>
@@ -222,61 +221,51 @@
   <!-- ==============================
      5. Individual Variables vs HbA1c Scatter Plot
      ============================== -->
-  <section id="case" class="section-container">
-    <h2>Individual Variables vs HbA1c</h2>
-    <p class="subtitle" style="margin-bottom: 1rem;">
-      Select any binary column (e.g., HighBP, HighChol, Smoker, etc.) from the dropdown to see its relationship with
-      participants' HbA1c. Points are colored by Diabetes_012 (0 = No Diabetes, 1 = Prediabetes, 2 = Diabetes).
-    </p>
-
-    <!-- Dropdown -->
-    <div class="controls" style="margin-bottom: 1rem;">
-      <label for="caseVarSelect" class="control-label">Choose Variable:</label>
-      <select id="caseVarSelect" class="control-select">
-        <option value="HighBP">HighBP</option>
-        <option value="HighChol">HighChol</option>
-        <option value="CholCheck">CholCheck</option>
-        <option value="Smoker">Smoker</option>
-        <option value="Stroke">Stroke</option>
-        <option value="HeartDiseaseorAttack">HeartDiseaseorAttack</option>
-        <option value="PhysActivity">PhysActivity</option>
-        <option value="Fruits">Fruits</option>
-        <option value="Veggies">Veggies</option>
-        <option value="HvyAlcoholConsump">HvyAlcoholConsump</option>
-        <option value="AnyHealthcare">AnyHealthcare</option>
-        <option value="NoDocbcCost">NoDocbcCost</option>
-        <option value="DiffWalk">DiffWalk</option>
-      </select>
-    </div>
-
-    <!-- Scatter Plot Container -->
-    <div id="casePlot" style="width: 100%; height: 500px; position: relative;"></div>
-    <p class="caption">
-      Figure 4. Selected variable (0 or 1) with jitter vs HbA1c (%). Colors represent Diabetes_012 (0/1/2).
-    </p>
-
-    <!-- 新增的解释文字 -->
-    <div class="case-interpretation" style="margin-top: 1.5rem;">
-      <h3>Interpretation</h3>
-      <p>
-        In this scatter plot, you see two vertical “columns” of points: one at x = 0 (left) and one at x = 1 (right).
-        Each dot’s
-        vertical position corresponds to that person’s HbA1c value (in %), and its color indicates diabetes status:
-        blue = No Diabetes (Diabetes_012 = 0), green = Prediabetes (Diabetes_012 = 1), and orange = Diabetes
-        (Diabetes_012 = 2).
-        <br><br>
-        When the selected variable equals 1, the cluster of dots on the right generally has higher HbA1c levels and a
-        larger
-        proportion of green/orange points compared to the cluster on the left (where the selected variable = 0). For
-        example,
-        if you choose “HighBP,” individuals with HighBP = 1 (right side) tend to have slightly higher HbA1c values and
-        more
-        prediabetes/diabetes cases than those with HighBP = 0 (left side). By switching the dropdown to any other binary
-        column (HighChol, Smoker, etc.), you can quickly observe how that particular risk factor associates with HbA1c
-        distribution and diabetes status.
+     <section id="case" class="section-container">
+      <p class="narration">
+        “Beyond population stats, can personal factors help explain HbA1c levels?”
       </p>
-    </div>
-  </section>
+    
+      <h2>What Increases Your HbA1c?</h2>
+      <p class="chart-lead">
+        Try selecting one — like <strong>HighBP</strong>, <strong>Smoker</strong>, or <strong>Exercise</strong> — and watch the shift.
+      </p>
+    
+      <!-- Dropdown -->
+      <div class="controls" style="margin-bottom: 1.5rem;">
+        <label for="caseVarSelect" class="control-label">Choose a variable:</label>
+        <select id="caseVarSelect" class="control-select">
+          <option value="HighBP">HighBP</option>
+          <option value="HighChol">HighChol</option>
+          <option value="CholCheck">CholCheck</option>
+          <option value="Smoker">Smoker</option>
+          <option value="Stroke">Stroke</option>
+          <option value="HeartDiseaseorAttack">HeartDiseaseorAttack</option>
+          <option value="PhysActivity">PhysActivity</option>
+          <option value="Fruits">Fruits</option>
+          <option value="Veggies">Veggies</option>
+          <option value="HvyAlcoholConsump">HvyAlcoholConsump</option>
+          <option value="AnyHealthcare">AnyHealthcare</option>
+          <option value="NoDocbcCost">NoDocbcCost</option>
+          <option value="DiffWalk">DiffWalk</option>
+        </select>
+      </div>
+    
+      <!-- Scatter Plot -->
+      <div id="casePlot" style="width: 100%; height: 500px; position: relative;"></div>
+      <p class="caption">
+        Figure 4. HbA1c levels (vertical) by selected binary variable (0 vs 1). Dot color represents diabetes status.
+      </p>
+    
+      <!-- Interpretation -->
+      <div class="case-interpretation" style="margin-top: 2rem;">
+        <h3>Interpretation</h3>
+        <p>
+          Each point shows a participant’s HbA1c level and whether they have diabetes (orange), prediabetes (green), or neither (blue).<br><br>
+          Two clusters represent people with variable = 0 (left) vs = 1 (right). Often, the right group shows slightly higher HbA1c and more diabetes cases — especially for risk factors like <strong>HighBP</strong>, <strong>Stroke</strong>, or <strong>Smoker</strong>.
+        </p>
+      </div>
+    </section>
 
 
   <!-- ==============================

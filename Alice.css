@@ -444,3 +444,64 @@ body {
   .zoom-in-fade {
     animation: zoomInFade 0.8s forwards;
   }
+
+  
+  .next-scene-grid {
+    display: grid;
+    grid-template-columns: 28% 72%;   /* 左右两栏固定比例 */
+    height: 100vh;                    /* 高度不变 */
+    width: 100vw;
+    align-items: center;
+    justify-items: center;
+    gap: 3rem;
+    padding: 2rem 4rem;
+    box-sizing: border-box;
+  }
+  
+  .alice-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;                     /* 保持垂直居中 */
+  }
+  
+  .alice-fixed-image {
+    height: 60vh;                     /* 始终固定大小 */
+    width: auto;
+    object-fit: contain;
+  }
+  
+  .text-column {
+    height: 40%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .typed-scroll-box {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 1rem;
+  }
+
+  #show-trend-btn {
+    align-self: center;         /* 在 flex column 中居中 */
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #66bb6a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;        /* 不换行，按钮宽度跟文字 */
+    width: auto;                /* 自动宽度 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+  }
+  
+  #show-trend-btn:hover {
+    background-color: #4caf50;
+  }

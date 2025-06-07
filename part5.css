@@ -15,6 +15,20 @@
     line-height: 1.6;
     scroll-behavior: smooth;
   }
+
+/* ========================================================================
+   颜色变量：绿色 + 橙色
+   ======================================================================== */
+   :root {
+    --color-primary: #2e7d32;              /* 主绿色 */
+    --color-highlight: #ef6c00;            /* 强调橙色 */
+    --color-secondary-text: #4a4a4a;       /* 深灰辅助文字 */
+    --border-radius: 20px;
+    --border-radius-small: 8px;
+    --shadow-default: rgba(0, 0, 0, 0.05);
+    --shadow-graphic: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
   
   /* ========================================================================
      0. CSS 变量：配色 / 圆角 / 阴影
@@ -67,13 +81,63 @@
   /* ========================================================================
      Hero Section 布局
      ======================================================================== */
+
+     .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      text-align: center;
+      color: #1a1a1a;
+      margin: 4rem auto 2rem auto;
+      max-width: 900px;
+      line-height: 1.3;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeSlideIn 1s ease-out forwards;
+    }
+    
+    .hero-title .highlight {
+      color: #ef6c00;
+      font-weight: 900;
+      animation: 
+        highlightGlow 2.5s ease-out forwards,
+        highlightPulse 2.5s ease-in-out 2.5s infinite; /* 延迟呼吸在渐变之后开始 */
+    }
+    
+    /* 标题淡入上移动画 */
+    @keyframes fadeSlideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes highlightGlow {
+      0% {
+        color: #ffc99e;
+      }
+      50% {
+        color: #f58a3c;
+      }
+      100% {
+        color: #ef6c00;
+      }
+    }
+
+    @keyframes highlightPulse {
+      0%, 100% {
+        text-shadow: 0 0 0 rgba(255, 111, 0, 0.4);
+      }
+      50% {
+        text-shadow: 0 0 8px rgba(255, 111, 0, 0.6);
+      }
+    }
   .hero-section {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 5rem 5rem 5rem;   /* 顶部留出导航 5rem */
     gap: 2rem;
-    margin-top: 60px;          /* 避免导航栏遮挡 */
+    margin-top: 20px;          /* 避免导航栏遮挡 */
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
@@ -116,13 +180,6 @@
     margin-bottom: 2rem;
     color: var(--color-secondary-text);
   }
-  
-  .hero-buttons {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  
   .btn {
     display: inline-block;
     text-decoration: none;
@@ -133,24 +190,29 @@
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
   
-  .btn-primary {
-    background-color: var(--color-primary);
-    color: #ffffff;
-    border: none;
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+  }
   .btn-primary:hover {
-    background-color: #5951d4;
+    background-color: #1b5e20;
   }
   
   .btn-secondary {
     background-color: transparent;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
+    color: var(--color-highlight);
+    border: 2px solid var(--color-highlight);
   }
-  
   .btn-secondary:hover {
-    background-color: #f2f2ff;
+    background-color: #fff2e6;
   }
   
   /* 右侧紫色圆角容器及装饰图标 */
@@ -174,10 +236,67 @@
   /* ========================================================================
      每个 Section 的统一样式
      ======================================================================== */
+
+     .intro-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .intro-numbers {
+      flex: 1;
+      min-width: 200px;
+      background: linear-gradient(to right, #fef5ee, #faf1ff);
+      border-left: 6px solid #f58a3c;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 6px 12px rgba(106, 13, 173, 0.1);
+    }
+    .intro-numbers p {
+      margin: 0.6rem 0;
+      font-weight: 500;
+      color: #333;
+    }
+    .intro-numbers strong {
+      color: #f58a3c; /* 紫色关键字 */
+    }
+    .intro-explainer {
+      flex: 2;
+      min-width: 280px;
+    }
+
+
+    .intro-insights {
+      background: linear-gradient(to right, #f9f3ff, #fefaf6);
+      border-left: 6px solid #f58a3c;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(106, 13, 173, 0.1);
+      margin-top: 2rem;
+    }
+    .insight-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .insight-list li {
+      margin-bottom: 0.75rem;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+    .insight-list li::before {
+      content: \"→\";
+      position: absolute;
+      left: 0;
+      color: #ef6c00;
+      font-weight: bold;
+    }
+
+
   .section-container {
     max-width: 1200px;
     margin: 0 auto;          /* 水平居中 */
-    padding: 100px 40px 60px;
+    padding: 80px 80px 80px;
   }
   
   .section-container h1,
@@ -214,6 +333,44 @@
   /* ========================================================================
      两栏布局：左侧总结文字，右侧图表
      ======================================================================== */
+
+     .narration {
+      font-size: 1.35rem;
+      font-weight: 600;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 4.5rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #4b2e83; /* 紫色强调色 */
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInSlideUp 1.4s ease-out forwards;
+    }
+    
+    /* 淡入+上移动画 */
+    @keyframes fadeInSlideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chart-intro {
+      font-size: 1.15rem;
+      font-weight: 500;
+      font-style: italic;
+      color: #4a4a4a;
+      margin: 0.75rem 0 1.5rem;
+      padding: 0.75rem 1rem;
+      background-color: #fdf6ef; /* 柔和橙调背景 */
+      border-left: 4px solid #ef6c00; /* 与 highlight 颜色一致 */
+      border-radius: 6px;
+      max-width: 90%;
+      transition: opacity 0.8s ease-in;
+    }
+
   .two-column {
     display: flex;                    /* 强制水平并排 */
     flex-direction: row;              /* 主轴水平方向 */
@@ -283,10 +440,71 @@
     margin-bottom: 0.5rem;
     color: #333;
   }
+
+  .chart-callout {
+    font-size: 1rem;
+    font-weight: 500;
+    font-style: italic;
+    color: #444;
+    margin: 0.75rem 0 1.5rem;
+    line-height: 1.6;
+  }
+  .chart-callout strong {
+    font-weight: 600;
+    color: #ef6c00;
+  }
+
   .chart-container .caption {
     margin-top: 4px;
   }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   
+  .section-summary {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #444;
+  }
+  
+  .chart-row {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  
+  .chart-block {
+    flex: 1 1 420px;
+    max-width: 500px;
+  }
+  
+  .caption {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #666;
+    margin-top: 0.75rem;
+  }
+  
+
+  
+.chart-lead {
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+
+.threshold-note {
+  font-style: italic;
+  color: #ef6c00;
+  font-size: 0.95rem;
+}
   /* ========================================================================
      Tooltip 样式
      ======================================================================== */
