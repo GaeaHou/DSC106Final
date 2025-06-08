@@ -126,9 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // 按 status 分组
     const dataAll = data;
-    console.log("Total data count:", dataAll.length);  // 应该接近 10000
-    console.log("Min HbA1c:", d3.min(dataAll, d => d.hbA1c));
-    console.log("Max HbA1c:", d3.max(dataAll, d => d.hbA1c));
     const dataNormal = data.filter(d => d.status === 'normal');
     const dataPre = data.filter(d => d.status === 'prediabetes');
     const dataDia = data.filter(d => d.status === 'diabetes');
