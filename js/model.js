@@ -1,101 +1,116 @@
-// predictor.js (fixed for accurate polynomial term computation)
-
-
 let model = null;
 let scaler = null;
 
 async function loadModel() {
-  try {
-    const response = await fetch("lib/best_grid2.json");
-    model = await response.json();
-    const standard = await fetch("lib/scaler_params.json");
-    scaler = await standard.json();
-  } catch (error) {
-    console.error("Failed to load model:", error);
-  }
+    try {
+        const response = await fetch("lib/best_grid3_fix_grow_fin.json");
+        model = await response.json();
+        const standard = await fetch("lib/scaler_params3_grow_fin.json");
+        scaler = await standard.json();
+        console.log("Loaded terms:", model.terms.length);
+    } catch (error) {
+        console.error("Failed to load model:", error);
+    }
 }
 
-
 function getUserInput() {
-  const gender = document.getElementById('gender').value;
-  // const hour = +document.getElementById('hour_of_day').value;
+    // const gender = document.getElementById('gender').value;
 
-  const input = {};
+    const input = {
+        other_carb: +document.getElementById('other_carb').value,
+        sugar: +document.getElementById('sugar').value,
+        protein: +document.getElementById('protein').value,
+        total_fat: +document.getElementById('total_fat').value,
+        dietary_fiber: +document.getElementById('dietary_fiber').value,
+        HbA1c: +document.getElementById('hba1c').value,
+        init_val: +document.getElementById('init_val').value,
+    };
 
-  input["calorie"] = +document.getElementById('calorie').value;
-  input["total_carb"] = +document.getElementById('total_carb').value;
-  input["sugar"] = +document.getElementById('sugar').value;
-  input["protein"] = +document.getElementById('protein').value;
-  input["total_fat"] = +document.getElementById('total_fat').value;
-  input["dietary_fiber"] = +document.getElementById('dietary_fiber').value;
-  input["HbA1c"] = +document.getElementById('hba1c').value;
-  input["init_val"] = +document.getElementById('init_val').value;
+    // input["Gender_MALE"] = gender === 'MALE' ? 1 : 0;
+    // input["Gender_FEMALE"] = gender === 'FEMALE' ? 1 : 0;
+    input["Gender_MALE"] = 0;
+    input["Gender_FEMALE"] = 1;
+    input["calorie"] = (input['other_carb'] * 4) + (input['sugar'] * 4) + (input['dietary_fiber'] * 4) + (input['protein'] * 4) + (input['total_fat'] * 9);
+    input['carb_per_fiber'] = ((input['other_carb']) + (input['sugar']) + (input['dietary_fiber'])) / (input['dietary_fiber'] + 1e-5);
+    input['sugar_ratio'] = input['sugar'] / (((input['other_carb']) + (input['sugar']) + (input['dietary_fiber'])) + 1e-5);
+    input['protein_fat_ratio'] = input['protein'] / (input['total_fat'] + 1e-5);
+    input['fat_protein_ratio'] = input['total_fat'] / (input['protein'] + 1e-5);
+    input['log_sugar'] = Math.log1p(input['sugar']);
+    input['sugar_2'] = input['sugar'] ** 2;
+    input['HbA1c_25'] = input['HbA1c'] * 0.25;
+    input['dietary_fiber_25'] = input['dietary_fiber'] * 0.25;
+    input['protein_25'] = input['protein'] ** 2;
 
-  input["Gender_MALE"] = gender === 'MALE' ? 1 : 0;
-  input["Gender_FEMALE"] = gender === 'FEMALE' ? 1 : 0;
-
-  input["sugar_carb"] = input["sugar"] + input["total_carb"];
-  // input["hour_of_day"] = hour;
-
-  // for (let i = 0; i <= 23; i++) {
-  //   input[`hour_of_day_${i}`] = (hour === i ? 1 : 0);
-  //   // input[`hour_of_day_${i}^2`] = input[`hour_of_day_${i}`];
-  // }
-
-  return input;
+    return input;
 }
 
 function standardizeInput(rawInput) {
-  const standardized = { ...rawInput }; // keep categorical untouched
-  scaler.features.forEach((feature, i) => {
-    const mean = scaler.mean[i];
-    const scale = scaler.scale[i];
-    standardized[feature] = (rawInput[feature] - mean) / scale;
-  });
-  return standardized;
-}
-
-
-function parseFeatureName(feature, input) {
-  if (feature.includes("^")) {
-    const [base, power] = feature.split("^");
-    return Math.pow(input[base] || 0, +power);
-  } else {
-    return input[feature] || 0;
-  }
+    const standardized = { ...rawInput };
+    scaler.features.forEach((feature, i) => {
+        const mean = scaler.mean[i];
+        const scale = scaler.scale[i];
+        standardized[feature] = (rawInput[feature] - mean) / scale;
+    });
+    return standardized;
 }
 
 function calculate_pred() {
-  const rawInputs = getUserInput();
-  const inputs = standardizeInput(rawInputs);
-  const data = [];
+    const rawInputs = getUserInput();
+    const baseInputs = standardizeInput(rawInputs);
+    const data = [];
 
-  for (let min = 0; min <= 120; min += 5) {
-    const weighted_time10 = (min * 11 - scaler.mean[scaler.features.indexOf("weighted_time10")]) /
-      scaler.scale[scaler.features.indexOf("weighted_time10")];
+    data.push({ time: 0, glucose: rawInputs.init_val });
 
-    let sum = model.intercept;
+    const std_idx_min = scaler.features.indexOf("standardized_minutes");
+    const mean_min = scaler.mean[std_idx_min];
+    const scale_min = scaler.scale[std_idx_min];
 
-    for (const term of model.terms) {
-      let result = 1;
-      for (const feat of term.features) {
-        if (feat.includes("^")) {
-          const [base, power] = feat.split("^");
-          const val = base === "weighted_time10" ? weighted_time10 : inputs[base];
-          result *= Math.pow(val || 0, +power);
-        } else {
-          const val = feat === "weighted_time10" ? weighted_time10 : inputs[feat];
-          result *= val || 0;
+    const std_idx_prev = scaler.features.indexOf("prev_glu");
+    const mean_prev = scaler.mean[std_idx_prev];
+    const scale_prev = scaler.scale[std_idx_prev];
+
+    let prev = rawInputs.init_val;
+
+    for (let min = 5; min <= 60; min += 5) {
+        const input = { ...baseInputs };
+        input["standardized_minutes"] = (min - mean_min) / scale_min;
+        input['prev_glu'] = (prev - mean_prev) / scale_prev;
+
+        let bin;
+        if (min <= 30) bin = 30;
+        else if (min <= 60) bin = 60;
+        else if (min <= 90) bin = 90;
+        else bin = 120;
+        [30, 60, 90, 120].forEach(b => {
+            input[`time_bin_${b}`] = (b === bin) ? 1 : 0;
+        });
+
+        let change = model.intercept;
+
+        for (const term of model.terms) {
+            let result = 1;
+            for (const f of term.features) {
+                let value;
+                if (f.includes("^")) {
+                    const [base, power] = f.split("^");
+                    value = Math.pow(input[base] || 0, +power);
+                } else {
+                    value = input[f] || 0;
+                }
+                result *= value;
+            }
+            change += result * term.coef;
         }
-      }
-      sum += result * term.coef;
+
+        let pred = change + prev;
+        pred = Math.max(0, Math.min(500, pred));
+
+        console.log(`Minute ${min} → Glucose: ${pred}`);
+        data.push({ time: min, glucose: pred });
+        prev = pred;
     }
 
-    console.log(sum);
-    data.push({ time: min, glucose: sum });
-  }
-
-  drawPlot(data);
+    drawPlot(data);
 }
 
 
@@ -124,7 +139,7 @@ function drawPlot(data) {
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
   const x = d3.scaleLinear()
-    .domain([0, 120])
+    .domain([0, 60])
     .range([0, width]);
 
   const y = d3.scaleLinear()

@@ -1,24 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Glucose Visualization</title>
   <link rel="stylesheet" href="glucose.css">
   <link rel="icon" href="data/image.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
-  
+
   <style>
-    .hidden { display: none; }
-    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
-    .fade-in { opacity: 1; transition: opacity 0.8s ease; }
+    .hidden {
+      display: none;
+    }
+
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .fade-in {
+      opacity: 1;
+      transition: opacity 0.8s ease;
+    }
 
     @keyframes fadeInHint {
-      to { opacity: 1; }
+      to {
+        opacity: 1;
+      }
     }
 
     @keyframes blinkCursor {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
     }
 
     .slide-in-button {
@@ -42,6 +62,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container" id="main-container">
 
@@ -74,10 +95,14 @@
         </div>
         <div class="instruction-card">
           <div class="instruction">
-            <p>This dashboard shows daily glucose levels recorded by continuous monitors. Each blue dot represents a glucose reading at a specific time, while red dots indicate readings recorded shortly after a meal.</p>
-            <p>Hover over any point to view the exact time and glucose value. You can also zoom in by selecting a time range on the chart, and reset at any time.</p>
-            <p>Look closely at the red dots. <b>What happens to glucose levels after meals? Do they always rise? Are the patterns the same for every meal—or every person?</b></p>
-            <p>This tool is designed to help you explore those patterns. Try switching between different people and days. See if you can spot trends in how glucose behaves after breakfast, lunch, or dinner.</p>
+            <p>This dashboard shows daily glucose levels recorded by continuous monitors. Each blue dot represents a
+              glucose reading at a specific time, while red dots indicate readings recorded shortly after a meal.</p>
+            <p>Hover over any point to view the exact time and glucose value. You can also zoom in by selecting a time
+              range on the chart, and reset at any time.</p>
+            <p>Look closely at the red dots. <b>What happens to glucose levels after meals? Do they always rise? Are the
+                patterns the same for every meal—or every person?</b></p>
+            <p>This tool is designed to help you explore those patterns. Try switching between different people and
+              days. See if you can spot trends in how glucose behaves after breakfast, lunch, or dinner.</p>
             <img src="./data/intro.png" style="display: block; margin: 12px auto; max-width: 100%;" />
           </div>
         </div>
@@ -91,67 +116,106 @@
       <h1 class="main-title2">How does nutrition shape your glucose curve?</h1>
       <div class="subtitle2">Predicting blood sugar trends based on food composition</div>
     </div>
-  <!-- glucose prediction section -->
-  <div class="two-column-layout2">
-    <!-- 左边：模拟图 -->
-    <div class="column left-column2">
-      <svg id="glucose-plot" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-    <!-- 右边：输入表单 + story -->
-    <div class="column right-column2">
-      <div class="control-card2">
-        <form id="input-form" class="two-col-form">
-          <label><span>Calorie:</span> <input type="number" id="calorie" value="410"></label>
-          <label><span>Total Carbohydrates:</span> <input type="number" id="total_carb" value="83"></label>
-          <label><span>Sugar:</span> <input type="number" id="sugar" value="66"></label>
-          <label><span>Protein:</span> <input type="number" id="protein" value="13"></label>
-          <label><span>Total Fat:</span> <input type="number" id="total_fat" value="0"></label>
-          <label><span>Dietary Fiber:</span> <input type="number" id="dietary_fiber" value="0"></label>
-          <label><span>HbA1c:</span> <input type="number" id="hba1c" value="5.6" step="0.1"></label>
-          <label><span>Initial Glucose:</span> <input type="number" id="init_val" value="138" step="1"></label>
-          <label><span>Gender:</span>
-            <select id="gender">
-              <option value="MALE">MALE</option>
-              <option value="FEMALE">FEMALE</option>
-            </select>
-          </label>
-          <button type="button" id="predict-button">Predict</button>
-        </form>
+    <!-- glucose prediction section -->
+    <div class="two-column-layout2">
+      <!-- 左边：模拟图 -->
+      <div class="column left-column2">
+        <svg id="glucose-plot" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
+      <!-- 右边：输入表单 + story -->
+      <div class="column right-column2">
+        
 
-      <!-- 预留：story 可视化解释部分 -->
-      <div class="instruction-card">
-        <div class="instruction2">
-          <p>
-            While everyone experiences blood sugar changes throughout the day, the <b>exact shape of your glucose curve depends heavily on what you eat</b>.
-          </p>
-          
-          <p>
-            This visualization lets you explore how different nutritional components—like carbohydrates, sugar, protein, and fat—affect your blood glucose trends after a meal.
-          </p>
-          
-          <p>
-            For example, suppose <b>Alice</b> just had a meal that included:
+        <!-- 预留：story 可视化解释部分 -->
+        <div class="instruction-card">
+          <div class="control-card2">
+          <form id="input-form" class="two-col-form">
+            <label>Sugar:
+              <input type="range" id="sugar" min="0" max="120" value="83" step="0.1"
+                oninput="sugar_val.innerText = this.value">
+              <span id="sugar_val">83</span>
+            </label><br>
+
+            <label>Protein:
+              <input type="range" id="protein" min="0" max="125" value="16" step="0.1"
+                oninput="protein_val.innerText = this.value">
+              <span id="protein_val">16</span>
+            </label><br>
+
+            <label>Total Fat:
+              <input type="range" id="total_fat" min="0" max="60" value="3.3" step="0.1"
+                oninput="total_fat_val.innerText = this.value">
+              <span id="total_fat_val">3.3</span>
+            </label><br>
+
+            <label>Dietary Fiber:
+              <input type="range" id="dietary_fiber" min="0" max="28" value="1.7" step="0.1"
+                oninput="fiber_val.innerText = this.value">
+              <span id="fiber_val">1.7</span>
+            </label><br>
+
+            <label>Other Carbohydrates:
+              <input type="range" id="other_carb" min="0" max="80" value="0.3" step="0.1"
+                oninput="othercarb_val.innerText = this.value">
+              <span id="othercarb_val">0.3</span>
+            </label><br>
+
+            <label>HbA1c:
+              <input type="range" id="hba1c" min="5.5" max="6.4" value="5.5" step="0.1"
+                oninput="hba1c_val.innerText = this.value">
+              <span id="hba1c_val">5.5</span>
+            </label><br>
+
+            <label>Initial Glucose:
+              <input type="range" id="init_val" min="60" max="140" value="59" step="0.1"
+                oninput="init_val_display.innerText = this.value">
+              <span id="init_val_display">59</span>
+            </label><br>
+
+            <!-- <label>Gender:
+              <select id="gender">
+                <option value="MALE">MALE</option>
+                <option value="FEMALE" selected>FEMALE</option>
+              </select>
+            </label><br> -->
+            <button type="button" id="predict-button">Predict</button>
+          </form>
+        </div>
+          <div class="instruction2">
+            <p>
+              While everyone experiences blood sugar changes throughout the day, the <b>exact shape of your glucose
+                curve depends heavily on what you eat</b>.
+            </p>
+
+            <p>
+              This visualization lets you explore how different nutritional components—like carbohydrates, sugar,
+              protein, and fat—affect your blood glucose trends after a meal.
+            </p>
+
+            <p>
+              For example, suppose <b>Alice</b> just had a meal that included:
             <ul>
               <li>🍚 <b>White rice</b> – high in carbohydrates and sugar</li>
               <li>🍗 <b>Grilled chicken</b> – rich in protein</li>
               <li>🍎 <b>Apple</b> – contains sugar and fiber</li>
             </ul>
-            We can input the approximate nutritional values: 410 kcal, 83g total carbs, 66g sugar, 13g protein, and minimal fat and fiber.
-          </p>
-          
-          <p>
-            Try adjusting these values in the panel to the right. Watch how the <b>glucose prediction curve</b> changes in real-time.
-          </p>
-          
-          <p>
-            <b>Can you predict how adding more fiber or reducing sugar would change the shape?</b> Try it and see!
-          </p>
+            We can input the approximate nutritional values: 410 kcal, 83g total carbs, 66g sugar, 13g protein, and
+            minimal fat and fiber.
+            </p>
+
+            <p>
+              Try adjusting these values in the panel to the right. Watch how the <b>glucose prediction curve</b>
+              changes in real-time.
+            </p>
+
+            <p>
+              <b>Can you predict how adding more fiber or reducing sugar would change the shape?</b> Try it and see!
+            </p>
+          </div>
         </div>
+
       </div>
-      
     </div>
-  </div>
   </div>
 
   <!-- tooltip -->
@@ -165,9 +229,9 @@
   <!-- 动画过渡场景 -->
   <section class="fullscreen-scene hidden" id="next-scene">
     <div class="next-scene-content glass-box">
-    <div id="typed-container"></div>
-    <button id="show-trend-btn" class="slide-in-button hidden">→ Explore Group Trends</button>
-  </div>
+      <div id="typed-container"></div>
+      <button id="show-trend-btn" class="slide-in-button hidden">→ Explore Group Trends</button>
+    </div>
   </section>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -175,7 +239,7 @@
   <script src="./js/model.js"></script>
   <script>
     let hasTypingStarted = false; // ✅ 添加布尔标志，避免重复触发
-  
+
     // 滚动检测，显示提示
     window.addEventListener('scroll', () => {
       const tip = document.getElementById('click-anywhere-tip');
@@ -183,24 +247,24 @@
         tip.classList.remove('hidden');
       }
     });
-  
+
     // 点击继续（仅第一次点击生效）
     document.addEventListener('click', (e) => {
       if (hasTypingStarted) return; // ✅ 已触发过则不再响应
       const container = document.getElementById('main-container');
       const isInsideContainer = container.contains(e.target);
       const isButton = e.target.tagName === 'BUTTON' || e.target.closest('button');
-  
+
       if (!isInsideContainer && !isButton) {
         hasTypingStarted = true; // ✅ 设置为已触发
         transitionToTypingScene();
       }
     });
-  
+
     function transitionToTypingScene() {
       document.querySelector('.container').classList.add('fade-out');
       document.getElementById('click-anywhere-tip').classList.add('fade-out');
-  
+
       setTimeout(() => {
         document.querySelector('.container').style.display = 'none';
         document.getElementById('click-anywhere-tip').style.display = 'none';
@@ -210,7 +274,7 @@
         startTypingSequence();
       }, 800);
     }
-  
+
     function startTypingSequence() {
       console.log("🟢 startTypingSequence() triggered");
       const lines = [
@@ -221,16 +285,16 @@
       ];
       const container = document.getElementById('typed-container');
       let lineIndex = 0;
-  
+
       function typeLine(line, callback) {
         const lineWrapper = document.createElement('div');
         lineWrapper.className = 'dialogue-line';
-  
+
         const textSpan = document.createElement('span');
         textSpan.className = 'dialogue-text typing';
         lineWrapper.appendChild(textSpan);
         container.appendChild(lineWrapper);
-  
+
         let i = 0;
         const interval = setInterval(() => {
           if (i < line.length) {
@@ -243,7 +307,7 @@
           }
         }, 40);
       }
-  
+
       function showNextLine() {
         if (lineIndex < lines.length) {
           typeLine(lines[lineIndex], () => {
@@ -261,9 +325,10 @@
           }, 1000);
         }
       }
-  
+
       showNextLine();
     }
   </script>
 </body>
+
 </html>
