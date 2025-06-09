@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amy's Meal Choices</title>
-    <link rel="icon" href="./data/image.png" type="image/x-icon" />
+  <link rel="icon" href="./data/image.png" type="image/x-icon" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="Alice.css">
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
@@ -20,6 +21,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- 加载动画 -->
   <div id="loading-screen">
@@ -36,7 +38,8 @@
       </div>
       <div class="meal-right">
         <div class="meal-interface">
-          <h1>What would <span style="color:#EF6C00">you</span> eat if you were <span style="color:#66BB6A">Alice</span>?</h1>
+          <h1>What would <span style="color:#EF6C00">you</span> eat if you were <span
+              style="color:#66BB6A">Alice</span>?</h1>
           <p>Alice wants to eat healthy. But is every healthy food equal?</p>
           <div class="food-choice-grid">
             <div class="food-category">
@@ -75,44 +78,46 @@
 
   <section class="fullscreen-scene hidden fade-out" id="glucose-predict">
     <div class="glucose-layout">
-  
+
       <!-- 左侧 Alice 吃饭图像 + 返回按钮 -->
       <div class="glucose-alice">
         <img src="./data/Aliceeat.png" alt="Alice Eating" />
         <button onclick="goBackToSelection()" class="back-button">🔙 Back to Meal Selection</button>
       </div>
-  
+
       <!-- 右侧内容：绘图 + 提交 + 实际结果 -->
       <div class="glucose-scene-content">
         <h2>Can You Predict Alice's Glucose Response?</h2>
         <p class="glucose-subtitle">Draw how you think her blood sugar changes after this meal!</p>
-  
+
         <!-- 用户绘图区 -->
         <div>
-          <canvas id="user-curve" width="500" height="250" style="border: 2px dashed #ccc; border-radius: 10px;"></canvas>
+          <canvas id="user-curve" width="500" height="250"
+            style="border: 2px dashed #ccc; border-radius: 10px;"></canvas>
           <p><button class="back-button" onclick="submitPrediction()">📈 Submit Your Prediction</button></p>
         </div>
-  
+
         <!-- 实际曲线对比区 -->
         <div class="hidden" id="real-curve-area">
           <h3>Actual Response</h3>
-          <canvas id="real-curve" width="500" height="250" style="border: 2px solid #2E7D32; border-radius: 10px;"></canvas>
+          <canvas id="real-curve" width="500" height="250"
+            style="border: 2px solid #2E7D32; border-radius: 10px;"></canvas>
           <p id="accuracy-result" style="margin-top: 1rem; font-size: 1.1rem; color: #2E7D32;"></p>
         </div>
         <p id="click-anywhere-tip" class="continue-hint hidden">Click anywhere to continue</p>
       </div>
-  
+
     </div>
   </section>
 
   <section class="fullscreen-scene hidden" id="next-scene">
     <div class="next-scene-grid">
-      
+
       <!-- 左侧：Alice 图片 -->
       <div class="alice-column">
         <img src="./data/Alicequestion.png" alt="Alice thinking" class="alice-fixed-image" />
       </div>
-  
+
       <!-- 右侧：台词动画 -->
       <div class="text-column  glass-box">
         <div id="typed-container" class="typed-scroll-box"></div>
@@ -120,16 +125,44 @@
           → Show Real Glucose Trends
         </button>
       </div>
-  
+
     </div>
   </section>
-  
+
 
   <script>
     const meal = { protein: null, carb: null, veg: null };
+
+    const input = {
+      sugar: 0,
+      protein: 0,
+      total_fat: 0,
+      dietary_fiber: 0,
+      other_carb: 0,
+    };
+
+    const nutritionDB = {
+      // Protein options
+      "Chicken": { protein: 50, total_fat: 10, sugar: 0, dietary_fiber: 0, other_carb: 0 },
+      "Tofu": { protein: 21, total_fat: 11, sugar: 0.7, dietary_fiber: 2.9, other_carb: 3 },
+      "Sausage": { protein: 13, total_fat: 16, sugar: 1, dietary_fiber: 0, other_carb: 1.6 },
+
+      // Carbs
+      "Brown Rice": { protein: 4.5, total_fat: 1.6, sugar: 1, dietary_fiber: 3.5, other_carb: 40 },
+      "White Rice": { protein: 4, total_fat: 0.35, sugar: 0, dietary_fiber: 0.5, other_carb: 49 },
+      "Sweet Potato": { protein: 1.5, total_fat: 0.1, sugar: 4, dietary_fiber: 3, other_carb: 14 },
+      "French Fries": { protein: 1.9, total_fat: 10, sugar: 1, dietary_fiber: 2, other_carb: 27 },
+
+      // Veggies/Fruits
+      "Broccoli": { protein: 2.3, total_fat: 0.3, sugar: 1, dietary_fiber: 2.2, other_carb: 2 },
+      "Corn": { protein: 3, total_fat: 1.1, sugar: 3.22, dietary_fiber: 2.7, other_carb: 7 },
+      "Apple": { protein: 0.3, total_fat: 0.2, sugar: 13, dietary_fiber: 3, other_carb: 5 },
+      "Raisins": { protein: 3.1, total_fat: 0.5, sugar: 40, dietary_fiber: 3, other_carb: 15 }
+    };
+
     let hasTypedStarted = false;  // ✅ 控制台词只触发一次
-  
-    window.selectFood = function(type, item) {
+
+    window.selectFood = function (type, item) {
       meal[type] = item;
       const imgMap = {
         "Chicken": "🍗", "Tofu": "🥬", "Sausage": "🌭",
@@ -142,6 +175,34 @@
         slot.innerHTML = `<span class="food-emoji">${imgMap[item]}</span><div>${item}</div>`;
       }
       if (meal.protein && meal.carb && meal.veg) {
+        for (let key in input) input[key] = 0;
+
+        // Sum up nutrition from selected items
+        [meal.protein, meal.carb, meal.veg].forEach(food => {
+          const values = nutritionDB[food];
+          for (let key in values) {
+            input[key] += values[key];
+          }
+        });
+
+        console.log("🍽️ Nutrition Summary:", input);
+        input["calorie"] = (input['other_carb'] * 4) + (input['sugar'] * 4) + (input['dietary_fiber'] * 4) + (input['protein'] * 4) + (input['total_fat'] * 9);
+        input['carb_per_fiber'] = ((input['other_carb']) + (input['sugar']) + (input['dietary_fiber'])) / (input['dietary_fiber'] + 1e-5);
+        input['sugar_ratio'] = input['sugar'] / (((input['other_carb']) + (input['sugar']) + (input['dietary_fiber'])) + 1e-5);
+        input['protein_fat_ratio'] = input['protein'] / (input['total_fat'] + 1e-5);
+        input['fat_protein_ratio'] = input['total_fat'] / (input['protein'] + 1e-5);
+        input['log_sugar'] = Math.log1p(input['sugar']);
+        input['sugar_2'] = input['sugar'] ** 2;
+
+        input['dietary_fiber_25'] = input['dietary_fiber'] * 0.25;
+        input['protein_25'] = input['protein'] ** 2;
+        input["init_val"] = 59;
+        input["HbA1c"] = 5.5;
+        input["Gender_MALE"] = 0;
+        input["Gender_FEMALE"] = 1;
+
+
+
         setTimeout(() => {
           document.getElementById('meal-select').classList.add('fade-out');
           setTimeout(() => {
@@ -153,11 +214,11 @@
         }, 600);
       }
     }
-  
-    window.selectCurve = function(id) {
+
+    window.selectCurve = function (id) {
       document.getElementById('curve-reveal').classList.remove('hidden');
     }
-  
+
     window.goBackToSelection = function () {
       document.getElementById('glucose-predict').classList.remove('fade-in');
       document.getElementById('glucose-predict').classList.add('fade-out');
@@ -167,33 +228,33 @@
         document.getElementById('meal-select').classList.remove('fade-out');
         document.getElementById('meal-select').classList.add('fade-in');
       }, 500);
-  
+
       meal.protein = null;
       meal.carb = null;
       meal.veg = null;
-  
+
       ['img-protein', 'img-carb', 'img-veg'].forEach(id => {
         const slot = document.getElementById(id);
         if (slot) slot.innerHTML = '';
       });
-  
+
       const curveReveal = document.getElementById('curve-reveal');
       if (curveReveal) curveReveal.classList.add('hidden');
-  
+
       const glucoseOptions = document.getElementById('glucose-options');
       if (glucoseOptions) glucoseOptions.classList.add('hidden');
-  
+
       const realArea = document.getElementById('real-curve-area');
       if (realArea) realArea.classList.add('hidden');
-  
+
       if (typeof initCurve === "function") initCurve();
       if (typeof realCtx !== "undefined" && typeof realCanvas !== "undefined") {
         realCtx.clearRect(0, 0, realCanvas.width, realCanvas.height);
       }
-  
+
       hasTypedStarted = false; // ✅ 重置台词触发标志
     }
-  
+
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         document.getElementById('loading-screen').style.display = 'none';
@@ -204,28 +265,28 @@
         }, 100);
       }, 3500);
     });
-  
+
     // ✅ 改动：只触发一次台词动画
     document.addEventListener('click', function (e) {
       const target = e.target;
       if (target.tagName === 'BUTTON' || target.tagName === 'CANVAS') return;
-  
+
       const glucoseScene = document.getElementById('glucose-predict');
       const realCurveShown = !document.getElementById('real-curve-area').classList.contains('hidden');
-  
+
       if (!glucoseScene.classList.contains('hidden') && realCurveShown && !hasTypedStarted) {
         hasTypedStarted = true;
         goToNextScene();
       }
     });
-  
+
     function goToNextScene() {
       const current = document.getElementById('glucose-predict');
       const next = document.getElementById('next-scene');
-  
+
       current.classList.remove('fade-in');
       current.classList.add('zoom-out-fade');
-  
+
       setTimeout(() => {
         current.classList.add('hidden');
         next.classList.remove('hidden');
@@ -233,7 +294,7 @@
         startTypingSequence();
       }, 800);
     }
-  
+
     function startTypingSequence() {
       const lines = [
         "“Hmm... You thought this was a healthy meal — and it was.”",
@@ -243,16 +304,16 @@
       ];
       const container = document.getElementById('typed-container');
       let lineIndex = 0;
-  
+
       function typeLine(line, callback) {
         const lineWrapper = document.createElement('div');
         lineWrapper.className = 'dialogue-line';
-  
+
         const textSpan = document.createElement('span');
         textSpan.className = 'dialogue-text typing';
         lineWrapper.appendChild(textSpan);
         container.appendChild(lineWrapper);
-  
+
         let i = 0;
         const interval = setInterval(() => {
           if (i < line.length) {
@@ -265,7 +326,7 @@
           }
         }, 40);
       }
-  
+
       function showNextLine() {
         if (lineIndex < lines.length) {
           typeLine(lines[lineIndex], () => {
@@ -283,10 +344,11 @@
           }, 1000);
         }
       }
-  
+
       showNextLine();
     }
   </script>
   <script src="./js/draw.js"></script>
 </body>
+
 </html>

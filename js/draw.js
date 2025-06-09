@@ -27,11 +27,11 @@ function drawCurve() {
   ctx.moveTo(0, canvas.height - 20);
   ctx.lineTo(canvas.width, canvas.height - 20);
   ctx.stroke();
-  for (let i = 0; i <= 5; i++) {
-    const x = (i / 5) * canvas.width;
+  for (let min = 0; min <= 60; min += 5) {
+    const x = (min / 60) * canvas.width;
     ctx.fillStyle = "#666";
     ctx.font = "12px sans-serif";
-    ctx.fillText(`${i * 30}min`, x + 2, canvas.height - 5);
+    ctx.fillText(`${min}min`, x + 2, canvas.height - 5);
   }
 
   ctx.beginPath();
@@ -50,6 +50,128 @@ function drawCurve() {
     ctx.fill();
   }
 }
+
+async function loadModel() {
+  try {
+    const response = await fetch("lib/best_grid3_fix_grow_fin.json");
+    model = await response.json();
+    const standard = await fetch("lib/scaler_params3_grow_fin.json");
+    scaler = await standard.json();
+    console.log("Loaded terms:", model.terms.length);
+  } catch (error) {
+    console.error("Failed to load model:", error);
+  }
+}
+
+function standardizeInput(rawInput) {
+  const standardized = { ...rawInput };
+  scaler.features.forEach((feature, i) => {
+    const mean = scaler.mean[i];
+    const scale = scaler.scale[i];
+    standardized[feature] = (rawInput[feature] - mean) / scale;
+  });
+  return standardized;
+}
+
+// const input = {
+//   other_carb: 0,
+//   sugar: 0,
+//   protein: 0,
+//   total_fat: 0,
+//   dietary_fiber: 0,
+//   HbA1c: 5.7,
+//   init_val: 59
+// };
+
+
+
+function getUserInput() {
+    const data = input;
+
+    return data;
+}
+
+function calculate_pred() {
+  const rawInputs = getUserInput();
+  console.log("pred", rawInputs);
+  const baseInputs = standardizeInput(rawInputs);
+  const data = [];
+
+  data.push({ time: 0, glucose: rawInputs.init_val });
+
+  const std_idx_min = scaler.features.indexOf("standardized_minutes");
+  const mean_min = scaler.mean[std_idx_min];
+  const scale_min = scaler.scale[std_idx_min];
+
+  const std_idx_prev = scaler.features.indexOf("prev_glu");
+  const mean_prev = scaler.mean[std_idx_prev];
+  const scale_prev = scaler.scale[std_idx_prev];
+
+  let prev = rawInputs.init_val;
+
+  for (let min = 5; min <= 60; min += 5) {
+    const inputs = { ...baseInputs };
+    inputs["standardized_minutes"] = (min - mean_min) / scale_min;
+    inputs['prev_glu'] = (prev - mean_prev) / scale_prev;
+
+    let bin;
+    if (min <= 30) bin = 30;
+    else if (min <= 60) bin = 60;
+    else if (min <= 90) bin = 90;
+    else bin = 120;
+    [30, 60, 90, 120].forEach(b => {
+      inputs[`time_bin_${b}`] = (b === bin) ? 1 : 0;
+    });
+
+    let change = model.intercept;
+
+    for (const term of model.terms) {
+      let result = 1;
+      for (const f of term.features) {
+        let value;
+        if (f.includes("^")) {
+          const [base, power] = f.split("^");
+          value = Math.pow(inputs[base] || 0, +power);
+          console.log(f, inputs[base]);
+        } else {
+          console.log(f, inputs[f])
+          value = inputs[f] || 0;
+        }
+        result *= value;
+      }
+      change += result * term.coef;
+    }
+
+    let pred = change + prev;
+    pred = Math.max(0, Math.min(500, pred));
+
+    console.log(`Minute ${min} → Glucose: ${pred}`);
+    data.push({ time: min, glucose: pred });
+    prev = pred;
+  }
+
+  return data
+}
+
+function interpolateModelToUser(realPoints, targetLength) {
+  const interpolated = [];
+  for (let i = 0; i < targetLength; i++) {
+    const t = (i / (targetLength - 1)) * 60; // time in minutes
+    // Find two surrounding points
+    let j = 1;
+    while (j < realPoints.length && realPoints[j].time < t) j++;
+    const p1 = realPoints[j - 1];
+    const p2 = realPoints[j];
+    const ratio = (t - p1.time) / (p2.time - p1.time);
+    const glucose = p1.glucose + ratio * (p2.glucose - p1.glucose);
+    interpolated.push(glucose);
+  }
+  return interpolated;
+}
+let model = null;
+let scaler = null;
+
+loadModel();
 
 canvas.addEventListener("mousedown", (e) => {
   const rect = canvas.getBoundingClientRect();
@@ -81,19 +203,19 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mouseup", () => dragging = null);
 canvas.addEventListener("mouseleave", () => dragging = null);
 
-const foodInfo = {
-  "Chicken":     { gi: 0,    strength: 0.1, delay: 50, width: 200 },
-  "Tofu":        { gi: 15,   strength: 0.2, delay: 45, width: 180 },
-  "Sausage":     { gi: 28,   strength: 0.3, delay: 40, width: 160 },
-  "Brown Rice":  { gi: 50,   strength: 0.7, delay: 35, width: 100 },
-  "White Rice":  { gi: 72,   strength: 0.9, delay: 30, width: 80 },
-  "Sweet Potato":{ gi: 65,   strength: 0.8, delay: 32, width: 90 },
-  "French Fries":{ gi: 75,   strength: 1.0, delay: 25, width: 70 },
-  "Broccoli":    { gi: 15,   strength: 0.2, delay: 60, width: 200 },
-  "Corn":        { gi: 60,   strength: 0.6, delay: 35, width: 90 },
-  "Apple":       { gi: 38,   strength: 0.5, delay: 45, width: 100 },
-  "Raisins":     { gi: 64,   strength: 0.9, delay: 25, width: 70 },
-};
+// const foodInfo = {
+//   "Chicken": { gi: 0, strength: 0.1, delay: 50, width: 200 },
+//   "Tofu": { gi: 15, strength: 0.2, delay: 45, width: 180 },
+//   "Sausage": { gi: 28, strength: 0.3, delay: 40, width: 160 },
+//   "Brown Rice": { gi: 50, strength: 0.7, delay: 35, width: 100 },
+//   "White Rice": { gi: 72, strength: 0.9, delay: 30, width: 80 },
+//   "Sweet Potato": { gi: 65, strength: 0.8, delay: 32, width: 90 },
+//   "French Fries": { gi: 75, strength: 1.0, delay: 25, width: 70 },
+//   "Broccoli": { gi: 15, strength: 0.2, delay: 60, width: 200 },
+//   "Corn": { gi: 60, strength: 0.6, delay: 35, width: 90 },
+//   "Apple": { gi: 38, strength: 0.5, delay: 45, width: 100 },
+//   "Raisins": { gi: 64, strength: 0.9, delay: 25, width: 70 },
+// };
 
 function simulateGlucoseCurve(mealSelection, length = numPoints) {
   const result = new Array(length).fill(0);
@@ -117,10 +239,13 @@ function submitPrediction() {
     veg: "Raisins"
   };
 
-  const realPoints = simulateGlucoseCurve(mealSelection);
+  
+
+  const realPoints = calculate_pred();
 
   // ⬇️ 归一化（中心化对齐）
-  const realY = realPoints.map(y => realCanvas.height - y);
+  const realGlucose = interpolateModelToUser(realPoints, numPoints);
+  const realY = realGlucose.map(g => realCanvas.height - g);
   const realMean = realY.reduce((a, b) => a + b, 0) / realY.length;
   const realNorm = realY.map(y => y - realMean);
 
@@ -135,18 +260,20 @@ function submitPrediction() {
   realCtx.moveTo(0, realCanvas.height - 20);
   realCtx.lineTo(realCanvas.width, realCanvas.height - 20);
   realCtx.stroke();
-  for (let i = 0; i <= 5; i++) {
-    const x = (i / 5) * realCanvas.width;
+  for (let min = 0; min <= 60; min += 5) {
+    const x = (min / 60) * realCanvas.width;
     realCtx.fillStyle = "#666";
     realCtx.font = "12px sans-serif";
-    realCtx.fillText(`${i * 30}min`, x + 2, realCanvas.height - 5);
+    realCtx.fillText(`${min}min`, x + 2, realCanvas.height - 5);
   }
 
   // ✅ 真实曲线
   realCtx.beginPath();
-  realCtx.moveTo(points[0].x, realMean + realNorm[0]);
-  for (let i = 1; i < numPoints; i++) {
-    realCtx.lineTo(points[i].x, realMean + realNorm[i]);
+  realCtx.moveTo(0, realMean + realNorm[0]);
+  for (let i = 1; i < realPoints.length; i++) {
+    const x = (realPoints[i].time / 60) * realCanvas.width;
+    const y = realMean + realNorm[i];
+    realCtx.lineTo(x, y);
   }
   realCtx.strokeStyle = "#2E7D32";
   realCtx.lineWidth = 2;
